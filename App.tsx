@@ -273,7 +273,7 @@ const AppContent = () => {
 
         {/* MARKETING PLAN SELECTOR */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white/20 backdrop-blur-md p-1 rounded-2xl inline-flex shadow-lg border border-white/10">
+          <div className="bg-white/20 backdrop-blur-md p-1 rounded-2xl inline-flex shadow-xl border-2 border-white/60">
             <button
               onClick={() => setActivePlan('plan1')}
               className={`px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 ${activePlan === 'plan1'
