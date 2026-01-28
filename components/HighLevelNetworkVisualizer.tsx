@@ -46,6 +46,7 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const [nodes, setNodes] = useState<NodePosition[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
+    const [viewMode, setViewMode] = useState<'space' | 'pyramid'>('space'); // NEW: View Mode state
 
     // --- 1. INITIALIZATION & LAYOUT ---
     useEffect(() => {
@@ -57,29 +58,68 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
 
         const newNodes: NodePosition[] = [];
 
-        // Root Node
-        newNodes.push({ id: 'root', x: 0, y: 0, level: 0 });
+        if (viewMode === 'space') {
+            // SPACE LAYOUT (Orbit)
+            // Root Node
+            newNodes.push({ id: 'root', x: 0, y: 0, level: 0 });
 
-        // Level 1 Nodes
-        const radiusL1 = 200;
-        const countL1 = Math.min(Math.max(directs || 0, 0), 12);
+            // Level 1 Nodes
+            const radiusL1 = 200;
+            const countL1 = Math.min(Math.max(directs || 0, 0), 12);
 
-        for (let i = 0; i < countL1; i++) {
-            const angle = (360 / (countL1 || 1)) * i - 90;
-            const rad = angle * (Math.PI / 180);
-            newNodes.push({
-                id: `l1-${i}`,
-                x: radiusL1 * Math.cos(rad),
-                y: radiusL1 * Math.sin(rad),
-                level: 1,
-                indirectsCount: (depth >= 2) ? indirects : 0
-            });
+            for (let i = 0; i < countL1; i++) {
+                const angle = (360 / (countL1 || 1)) * i - 90;
+                const rad = angle * (Math.PI / 180);
+                newNodes.push({
+                    id: `l1-${i}`,
+                    x: radiusL1 * Math.cos(rad),
+                    y: radiusL1 * Math.sin(rad),
+                    level: 1,
+                    indirectsCount: (depth >= 2) ? indirects : 0
+                });
+            }
+        } else {
+            // PYRAMID LAYOUT (Vertical Tree)
+            // Rules:
+            // - Level 0: Root (Top Center)
+            // - Levels 1..Depth: Rows of dots.
+            // - Size decreases with level.
+            // - We simulate a "fan" or "triangle".
+
+            // Root
+            newNodes.push({ id: 'root', x: 0, y: -250, level: 0 }); // Start higher up
+
+            // Generate levels
+            const maxLevels = Math.min(depth + 1, 8); // user asked for at least 8, limit to avoid crash
+            let currentY = -120; // Start below root
+
+            for (let l = 1; l < maxLevels; l++) {
+                // For visual pyramid, we don't render ALL actual nodes (exponential explosion).
+                // We render a representative row.
+                // Width increases with level? Or just a fixed wider row?
+                // Let's make a "triangle" shape.
+                const nodesInRow = Math.min(Math.pow(2, l) + 2, 16); // Fake counts for visuals: 4, 6, 8... max 16
+                const rowWidth = 600 + (l * 50);
+                const spacing = rowWidth / nodesInRow;
+
+                for (let i = 0; i < nodesInRow; i++) {
+                    const offsetX = (i - (nodesInRow - 1) / 2) * spacing;
+                    newNodes.push({
+                        id: `l${l}-${i}`,
+                        x: offsetX,
+                        y: currentY,
+                        level: l,
+                        indirectsCount: 0 // No satellites in pyramid mode
+                    });
+                }
+                currentY += 80; // Vertical spacing
+            }
         }
 
         setNodes(newNodes);
         setIsInitialized(true);
 
-    }, [isOpen, directs, indirects, depth]); // Re-init layout on prop change
+    }, [isOpen, directs, indirects, depth, viewMode]); // Re-init layout on prop change
 
     // --- 2. DRAG LOGIC ---
     const handlePointerDown = (e: React.PointerEvent, nodeId: string) => {
@@ -206,6 +246,23 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                         <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide">VISUALIZZATORE RETE PLUS</p>
                     </div>
                 </div>
+
+                {/* MODE TOGGLE */}
+                <div className="pointer-events-auto flex gap-2 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10">
+                    <button
+                        onClick={() => setViewMode('space')}
+                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'space' ? 'bg-white text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                    >
+                        SPAZIO
+                    </button>
+                    <button
+                        onClick={() => setViewMode('pyramid')}
+                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'pyramid' ? 'bg-white text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                    >
+                        PIRAMIDE
+                    </button>
+                </div>
+
                 <button
                     onClick={onClose}
                     className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:rotate-90 pointer-events-auto cursor-pointer"
@@ -241,10 +298,10 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                             className="absolute flex items-center justify-center touch-none select-none cursor-grab active:cursor-grabbing"
                             style={{
                                 transform: `translate(${node.x}px, ${node.y}px)`,
-                                width: node.level === 0 ? '128px' : '64px', // Root bigger
-                                height: node.level === 0 ? '128px' : '64px',
-                                marginLeft: node.level === 0 ? '-64px' : '-32px',
-                                marginTop: node.level === 0 ? '-64px' : '-32px',
+                                width: node.level === 0 ? '128px' : (viewMode === 'pyramid' ? Math.max(16, 64 - node.level * 8) + 'px' : '64px'), // Pyramid: 64, 56, 48...
+                                height: node.level === 0 ? '128px' : (viewMode === 'pyramid' ? Math.max(16, 64 - node.level * 8) + 'px' : '64px'),
+                                marginLeft: node.level === 0 ? '-64px' : (viewMode === 'pyramid' ? `-${Math.max(8, 32 - node.level * 4)}px` : '-32px'),
+                                marginTop: node.level === 0 ? '-64px' : (viewMode === 'pyramid' ? `-${Math.max(8, 32 - node.level * 4)}px` : '-32px'),
                                 zIndex: node.level === 0 ? 20 : 10,
                                 touchAction: 'none'
                             }}
@@ -263,16 +320,21 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                             ) : (
                                 // CHILD NODE w/ SATELLITES
                                 <div className="relative w-full h-full">
-                                    {/* Satellites Container */}
+                                    {/* Satellites Container - Only if satellites exist */}
                                     <div className="absolute inset-0 animate-spin-slow pointer-events-none">
                                         {node.indirectsCount && node.indirectsCount > 0 && renderSatellites(node.indirectsCount)}
                                     </div>
 
                                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/30 flex flex-col items-center justify-center text-white font-bold border-2 border-green-300/30 hover:scale-110 transition-transform">
-                                        <Users size={20} />
-                                        <span className="absolute -bottom-6 text-green-300 text-[10px] font-bold bg-black/50 px-2 py-0.5 rounded-full whitespace-nowrap pointer-events-none">
-                                            1° Linea
-                                        </span>
+                                        {/* Icon size adapts */}
+                                        <Users size={node.level > 3 ? 12 : 20} className={node.level > 4 ? 'opacity-0' : ''} />
+
+                                        {/* Level Label: Show only if space permits or not deep pyramid */}
+                                        {(viewMode === 'space' || node.level <= 2) && (
+                                            <span className="absolute -bottom-6 text-green-300 text-[10px] font-bold bg-black/50 px-2 py-0.5 rounded-full whitespace-nowrap pointer-events-none">
+                                                {node.level}° Linea
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             )}
