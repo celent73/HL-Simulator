@@ -97,8 +97,10 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                     countForLevel = directs;
                 } else {
                     if (directs > 0 && indirects > 0) {
-                        // Visual growth capped at 16
-                        countForLevel = Math.min(directs * l + (indirects * 2), 16);
+                        // Correct exponential growth: Directs * (Indirects ^ (Level - 1))
+                        const exactCount = directs * Math.pow(indirects, l - 1);
+                        // Cap at 16 for UI purposes
+                        countForLevel = Math.min(exactCount, 16);
                     } else {
                         countForLevel = 0;
                     }
