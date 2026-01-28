@@ -67,7 +67,7 @@ const TreeNode = ({
     // Root: Retail
     earnings = turnover * (myDiscount / 100);
     label = 'Vendita';
-    badgeColorClass = 'bg-emerald-500';
+    badgeColorClass = 'bg-green-800';
   } else {
     // Downline
     if (isRoyaltyZone) {
