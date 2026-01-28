@@ -50,7 +50,8 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const [nodes, setNodes] = useState<NodePosition[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
-    const [viewMode, setViewMode] = useState<'space' | 'pyramid'>('space'); // NEW: View Mode state
+    const [viewMode, setViewMode] = useState<'space' | 'pyramid'>('space');
+    const [zoom, setZoom] = useState<number>(1); // NEW: Zoom state
 
     // --- 1. INITIALIZATION & LAYOUT ---
     useEffect(() => {
@@ -267,6 +268,31 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                     </div>
                 </div>
 
+                {/* ZOOM CONTROLS - NEW */}
+                <div className="pointer-events-auto flex gap-1 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10 mr-2">
+                    <button
+                        onClick={() => setZoom(z => Math.max(0.2, z - 0.1))}
+                        className="w-8 h-8 flex items-center justify-center rounded-md text-white hover:bg-white/20 transition-all active:scale-95"
+                        title="Zoom Out"
+                    >
+                        -
+                    </button>
+                    <button
+                        onClick={() => setZoom(1)} // Reset Zoom
+                        className="w-10 h-8 flex items-center justify-center rounded-md text-xs font-bold text-white hover:bg-white/20 transition-all"
+                        title="Reset Zoom"
+                    >
+                        {Math.round(zoom * 100)}%
+                    </button>
+                    <button
+                        onClick={() => setZoom(z => Math.min(3, z + 0.1))}
+                        className="w-8 h-8 flex items-center justify-center rounded-md text-white hover:bg-white/20 transition-all active:scale-95"
+                        title="Zoom In"
+                    >
+                        +
+                    </button>
+                </div>
+
                 {/* MODE TOGGLE */}
                 <div className="pointer-events-auto flex gap-2 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10">
                     <button
@@ -311,7 +337,10 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
 
             {/* CANVAS UNIVERSE */}
             <div className="flex-1 relative overflow-hidden cursor-move">
-                <div className="absolute top-1/2 left-1/2 w-0 h-0">
+                <div
+                    className="absolute top-1/2 left-1/2 w-0 h-0 transition-transform duration-200 ease-out"
+                    style={{ transform: `scale(${zoom})` }} // NEW: Apply Zoom
+                >
                     {nodes.map(node => (
                         <div
                             key={node.id}
@@ -413,6 +442,7 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                                 onUpdateIndirects(0);
                                 onUpdateDepth(3);
                                 onUpdatePvPerUser(100);
+                                setZoom(1); // Reset Zoom too
                             }}
                             className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-400 border border-red-500/30 transition-all shadow-lg active:scale-95"
                             title="Reset Params"
