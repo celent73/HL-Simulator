@@ -6,7 +6,18 @@
  * --------------------------------------------------------------------------
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+// ... imports
+
+// ... inside App component
+const toggleLanguage = () => {
+  setLanguage((prev: Language) => {
+    if (prev === 'it') return 'en';
+    if (prev === 'en') return 'es';
+    if (prev === 'es') return 'de';
+    return 'it';
+  });
+};
 import { supabase, supabaseUrl } from './utils/supabaseClient';
 import { HerbalifePlanInput } from './types'; // UPDATED IMPORT
 import { useHerbalifeLogic } from './hooks/useHerbalifeLogic'; // UPDATED IMPORTS
@@ -18,6 +29,8 @@ import { CashbackDetailedModal } from './components/CashbackDetailedModal'; // N
 import RoadToPresidentModal from './components/RoadToPresidentModal'; // NEW IMPORT
 import NetworkVisualizerModal from './components/NetworkVisualizerModal'; // NEW IMPORT
 import { LegalFooter } from './components/LegalFooter';
+
+import { Language } from './utils/translations';
 import { LegalModal } from './components/LegalModal';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 import { PremiumModal } from './components/PremiumModal';
@@ -159,7 +172,26 @@ const AppContent = () => {
   useEffect(() => { if (isDarkMode) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark'); }, [isDarkMode]);
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
-  const toggleLanguage = () => setLanguage(language === 'it' ? 'de' : 'it');
+
+  const toggleLanguage = () => {
+    switch (language) {
+      case 'it': setLanguage('en'); break;
+      case 'en': setLanguage('es'); break;
+      case 'es': setLanguage('de'); break;
+      case 'de': setLanguage('it'); break;
+      default: setLanguage('it');
+    }
+  };
+
+  const currentFlag = useMemo(() => {
+    switch (language) {
+      case 'it': return '🇮🇹';
+      case 'en': return '🇬🇧';
+      case 'es': return '🇪🇸';
+      case 'de': return '🇩🇪';
+      default: return '🇮🇹';
+    }
+  }, [language]);
 
   return (
     <div className={`min-h-screen bg-transparent text-gray-800 dark:text-gray-200 transition-colors duration-300 relative flex flex-col overflow-x-hidden`}>
@@ -199,6 +231,10 @@ const AppContent = () => {
             <div className="flex items-center gap-2 flex-wrap justify-end">
               <button onClick={toggleTheme} className="p-2 rounded-xl bg-white/20 text-white hover:bg-white/30 transition shadow-lg backdrop-blur-sm">
                 {isDarkMode ? <SunIcon /> : <MoonIcon />}
+              </button>
+
+              <button onClick={toggleLanguage} className="p-2 rounded-xl bg-white/20 text-white hover:bg-white/30 transition shadow-lg backdrop-blur-sm text-xl" title="Cambia Lingua">
+                {currentFlag}
               </button>
 
               {/* Herby Assistant Icon - Improved Style */}

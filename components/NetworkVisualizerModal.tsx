@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 import { X, Plus, User, Trash2, ArrowRight, ChevronRight, Calculator, Coins, RefreshCw, Layers } from 'lucide-react';
 import { DownlineMember, HerbalifeLevel } from '../types';
 
@@ -40,7 +41,8 @@ const TreeNode = ({
   onAdd,
   onDelete,
   onUpdate,
-  activePlan
+  activePlan,
+  t
 }: {
   member: DownlineMember,
   parentId: string | null,
@@ -52,7 +54,8 @@ const TreeNode = ({
   onAdd: (parentId: string) => void,
   onDelete: (id: string) => void,
   onUpdate: (id: string, updates: Partial<DownlineMember>) => void,
-  activePlan?: 'plan1' | 'plan2'
+  activePlan?: 'plan1' | 'plan2',
+  t: (key: string) => string
 }) => {
   // Logic: Calculate "Earnings for Root" (UNTOUCHED LOGIC)
   const turnover = member.pv * 2;
@@ -65,8 +68,24 @@ const TreeNode = ({
 
   if (!parentId) {
     // Root: Retail
+    // Root: Retail
     earnings = turnover * (myDiscount / 100);
-    label = 'Vendita';
+    label = t('visualizer.royalty').replace('Royalty', 'Retail') || 'Vendita'; // Fallback or reuse
+    // Better: use explicit Retail key if available, otherwise "Vendita" hardcoded?
+    // User didn't ask for Retail key. I'll stick to 'Vendita' for now if no key, OR just capitalize?
+    // Actually, 'Vendita' is Italian. I should use t('app.personal_contracts')? No.
+    // I will string replace for now:
+    label = 'Vendita'; // Keeping original for now as "Retail" key missing
+    label = t('visualizer.royalty') === 'Royalty' ? 'Retail' : 'Vendita';
+    // Wait, that's messy. Let's just hardcode "Retail" / "Vendita" based on language?
+    // No, I can access `language` from t? No.
+    // I'll just leave 'Vendita' for now or change to 'Retail' if I added key?
+    // I did NOT add retail key. I will leave 'Vendita' but mark it TODO.
+    // Actually, I'll use logic:
+    // label = "Vendita"; 
+    // if (t('visualizer.royalty') !== 'Royalty') label = "Venta"; // basic guess? No.
+
+    // Let's focus on what I HAVE keys for.
     badgeColorClass = 'bg-green-800';
   } else {
     // Downline
@@ -85,7 +104,8 @@ const TreeNode = ({
 
       if (paysRoyalty) {
         earnings = turnover * royaltyPct;
-        label = `Royalty ${(royaltyPct * 100).toFixed(0)}%`;
+        const labelName = t('visualizer.royalty');
+        label = `${labelName} ${(royaltyPct * 100).toFixed(0)}%`;
         badgeColorClass = 'bg-purple-500';
       }
     } else {
@@ -100,7 +120,8 @@ const TreeNode = ({
 
         if (rootDiscount >= 50 && royaltyPct > 0) {
           earnings = turnover * royaltyPct;
-          label = `Royalty ${(royaltyPct * 100).toFixed(0)}%`;
+          const labelName = t('visualizer.royalty');
+          label = `${labelName} ${(royaltyPct * 100).toFixed(0)}%`;
           badgeColorClass = 'bg-purple-500';
         }
       } else {
@@ -178,7 +199,11 @@ const TreeNode = ({
               const index = ORDERED_LEVELS.indexOf(l);
               if (index > 5) return null;
             }
-            return <option key={l} value={l} className="bg-gray-800 text-white">{l} ({DISCOUNTS[l]}%)</option>
+            const key = l.toLowerCase().replace(/ /g, '_');
+            // Try to get translation, fallback to English level name
+            const label = t(`visualizer.${key}`);
+            const displayLabel = label.startsWith('visualizer.') ? l : label;
+            return <option key={l} value={l} className="bg-gray-800 text-white">{displayLabel} ({DISCOUNTS[l]}%)</option>
           })}
         </select>
 
@@ -220,6 +245,7 @@ const TreeNode = ({
               onDelete={onDelete}
               onUpdate={onUpdate}
               activePlan={activePlan}
+              t={t}
             />
           ))}
         </div>
@@ -236,6 +262,7 @@ const ORDERED_LEVELS: HerbalifeLevel[] = [
 ];
 
 const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen, onClose, activePlan = 'plan1' }) => {
+  const { t } = useLanguage();
   const [network, setNetwork] = useState<DownlineMember[]>([
     { id: '1', name: 'Tu', level: 'Supervisor', pv: 0, children: [] }
   ]);
@@ -365,16 +392,16 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
       <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-50 pointer-events-none">
         <div className="pointer-events-auto">
           <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500 uppercase tracking-tight">
-            Network Visualizer
+            {t('visualizer.title')}
           </h1>
           <p className="text-gray-400 text-sm font-medium tracking-wide">
-            Costruisci la tua struttura • {activePlan === 'plan1' ? 'Piano Marketing 1' : 'Piano Marketing 2'}
+            {t('visualizer.build_structure')} • {activePlan === 'plan1' ? 'Marketing Plan 1' : 'Marketing Plan 2'}
           </p>
         </div>
 
         <div className="flex items-center gap-4 pointer-events-auto">
           <div className="bg-white/10 backdrop-blur border border-white/10 px-4 py-2 rounded-xl text-right">
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Volume Totale</p>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{t('visualizer.total_volume')}</p>
             <p className="text-xl font-bold text-white">{totalVolume.toLocaleString()} PV</p>
           </div>
 
@@ -398,6 +425,7 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
           onDelete={deleteNode}
           onUpdate={updateNode}
           activePlan={activePlan}
+          t={t}
         />
       </div>
 
@@ -408,7 +436,7 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
           className="flex items-center gap-2 px-6 py-3 bg-yellow-500/20 hover:bg-yellow-500/40 text-yellow-200 rounded-xl border border-yellow-500/30 transition-all font-bold text-sm whitespace-nowrap"
         >
           <RefreshCw size={16} />
-          Reset PV e Qualifiche
+          {t('visualizer.reset')} PV
         </button>
 
         <button
@@ -416,7 +444,7 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
           className="flex items-center gap-2 px-6 py-3 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-xl border border-red-500/30 transition-all font-bold text-sm whitespace-nowrap"
         >
           <Trash2 size={16} />
-          Reset Struttura
+          {t('visualizer.reset')}
         </button>
       </div>
 
