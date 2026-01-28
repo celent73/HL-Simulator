@@ -43,7 +43,8 @@ const TreeNode = ({
   onDelete,
   onUpdate,
   activePlan,
-  t
+  t,
+  isAutoMode
 }: {
   member: DownlineMember,
   parentId: string | null,
@@ -56,7 +57,8 @@ const TreeNode = ({
   onDelete: (id: string) => void,
   onUpdate: (id: string, updates: Partial<DownlineMember>) => void,
   activePlan?: 'plan1' | 'plan2',
-  t: (key: string) => string
+  t: (key: string) => string,
+  isAutoMode?: boolean // NEW PROP
 }) => {
   // Logic: Calculate "Earnings for Root" (UNTOUCHED LOGIC)
   const turnover = member.pv * 2;
@@ -189,9 +191,10 @@ const TreeNode = ({
           placeholder="Nome..."
         />
 
-        {/* Level Select */}
+        {/* Level Select - Disabled in Auto Mode */}
         <select
-          className="w-full bg-black/20 text-white rounded text-xs p-1.5 mb-2 border border-white/10 focus:ring-0 cursor-pointer appearance-none hover:bg-black/30 transition-colors font-medium"
+          disabled={isAutoMode}
+          className="w-full bg-black/20 text-white rounded text-xs p-1.5 mb-2 border border-white/10 focus:ring-0 cursor-pointer appearance-none hover:bg-black/30 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           value={member.level}
           onChange={(e) => onUpdate(member.id, { level: e.target.value as HerbalifeLevel })}
         >
@@ -207,6 +210,8 @@ const TreeNode = ({
             return <option key={l} value={l} className="bg-gray-800 text-white">{displayLabel} ({DISCOUNTS[l]}%)</option>
           })}
         </select>
+        {/* Overlay to disable interaction in Auto Mode */}
+        {/* Note: We pass isAutoMode as prop to TreeNode to conditionally disable select */}
 
         {/* PV Input */}
         <div className="flex items-center justify-between bg-black/20 rounded px-2 py-1.5 border border-white/5">
@@ -247,6 +252,7 @@ const TreeNode = ({
               onUpdate={onUpdate}
               activePlan={activePlan}
               t={t}
+              isAutoMode={isAutoMode}
             />
           ))}
         </div>
@@ -264,9 +270,55 @@ const ORDERED_LEVELS: HerbalifeLevel[] = [
 
 const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen, onClose, activePlan = 'plan1' }) => {
   const { t } = useLanguage();
+  const [isAutoMode, setIsAutoMode] = useState(false); // NEW: Auto Mode State
   const [network, setNetwork] = useState<DownlineMember[]>([
     { id: '1', name: 'Tu', level: 'Supervisor', pv: 0, children: [] }
   ]);
+
+  // AUTO-PROGRESSION LOGIC
+  React.useEffect(() => {
+    if (!isAutoMode) return;
+
+    let hasChanges = false;
+
+    // Helper to calculate level based on PV
+    const getLevelFromPV = (pv: number): HerbalifeLevel => {
+      if (pv >= 4000) return 'Supervisor';
+      if (pv >= 1000) return 'Success Builder'; // Simplified rule
+      if (pv >= 500) return 'Senior Consultant';
+      return 'Member';
+    };
+
+    const processNodes = (nodes: DownlineMember[]): DownlineMember[] => {
+      return nodes.map(node => {
+        const properLevel = getLevelFromPV(node.pv);
+        let updatedChildren = node.children;
+
+        if (node.children && node.children.length > 0) {
+          const processedChildren = processNodes(node.children);
+          if (processedChildren !== node.children) {
+            updatedChildren = processedChildren;
+          }
+        }
+
+        // Only update if level matches the rule (Auto Mode enforces rule)
+        // But we must allow manual override? No, user said "in base ai punti sale di livello".
+        if (node.level !== properLevel || updatedChildren !== node.children) {
+          hasChanges = true;
+          return { ...node, level: properLevel, children: updatedChildren || [] };
+        }
+
+        return node;
+      });
+    };
+
+    const newNetwork = processNodes(network);
+
+    if (hasChanges) {
+      setNetwork(newNetwork);
+    }
+
+  }, [network, isAutoMode]); // Run whenever network changes or mode toggles
 
   // Recalculate totals for display
   const { totalEarnings, totalVolume } = useMemo(() => {
@@ -395,9 +447,27 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
           <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500 uppercase tracking-tight">
             {t('visualizer.title')}
           </h1>
-          <p className="text-gray-400 text-sm font-medium tracking-wide">
-            {t('visualizer.build_structure')} • {activePlan === 'plan1' ? 'Marketing Plan 1' : 'Marketing Plan 2'}
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-gray-400 text-sm font-medium tracking-wide">
+              {t('visualizer.build_structure')} • {activePlan === 'plan1' ? 'Marketing Plan 1' : 'Marketing Plan 2'}
+            </p>
+
+            {/* MODE TOGGLE */}
+            <div className="flex bg-white/5 rounded-lg border border-white/10 p-0.5 pointer-events-auto">
+              <button
+                onClick={() => setIsAutoMode(false)}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${!isAutoMode ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+              >
+                Manuale
+              </button>
+              <button
+                onClick={() => setIsAutoMode(true)}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${isAutoMode ? 'bg-green-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+              >
+                Automatico
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center gap-4 pointer-events-auto">
@@ -427,6 +497,7 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
           onUpdate={updateNode}
           activePlan={activePlan}
           t={t}
+          isAutoMode={isAutoMode}
         />
       </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { X, Users, Star, ArrowUpRight, Shield, Award } from 'lucide-react';
+import { X, Users, Star, ArrowUpRight, Shield, Award, RotateCcw } from 'lucide-react';
 
 interface VisualizerProps {
     isOpen: boolean;
@@ -373,6 +373,22 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                         onChange={onUpdatePvPerUser}
                         step={25} min={25}
                     />
+
+                    {/* RESET BUTTON */}
+                    <div className="flex flex-col items-center gap-2 justify-end pb-1">
+                        <button
+                            onClick={() => {
+                                onUpdateDirects(3);
+                                onUpdateIndirects(3);
+                                onUpdateDepth(3);
+                                onUpdatePvPerUser(100);
+                            }}
+                            className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-400 border border-red-500/30 transition-all shadow-lg active:scale-95"
+                            title="Reset Params"
+                        >
+                            <RotateCcw size={14} strokeWidth={2.5} />
+                        </button>
+                    </div>
                 </div>
             </div>
 
