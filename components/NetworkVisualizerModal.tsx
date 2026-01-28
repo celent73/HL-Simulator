@@ -12,6 +12,7 @@ interface NetworkVisualizerModalProps {
 const LEVEL_COLORS: Record<HerbalifeLevel, string> = {
   'Member': 'from-gray-700 to-gray-600 border-gray-500 text-white',
   'Senior Consultant': 'from-blue-600 to-blue-500 border-blue-400 text-white shadow-blue-500/20',
+  'Success Builder': 'from-indigo-600 to-indigo-500 border-indigo-400 text-white shadow-indigo-500/20',
   'Qualified Producer': 'from-amber-900 to-amber-800 border-amber-700 text-white shadow-amber-900/40', // Brown
   'Supervisor': 'from-green-600 to-emerald-500 border-green-400 text-white shadow-green-500/30 shadow-lg',
   'World Team': 'from-gray-800 to-gray-900 border-gray-600 text-white shadow-lg', // Dark Gray
@@ -24,7 +25,7 @@ const LEVEL_COLORS: Record<HerbalifeLevel, string> = {
 };
 
 const DISCOUNTS: Record<HerbalifeLevel, number> = {
-  'Member': 25, 'Senior Consultant': 35, 'Qualified Producer': 42,
+  'Member': 25, 'Senior Consultant': 35, 'Success Builder': 42, 'Qualified Producer': 42,
   'Supervisor': 50, 'World Team': 50, 'Active World Team': 50, 'GET': 50, 'GET 2.5': 50,
   'Millionaire': 50, 'Millionaire 7.5': 50, 'President': 50
 };
@@ -161,8 +162,8 @@ const TreeNode = ({
 
         {/* Earnings Badge - UPDATED: Darker Green & Larger */}
         {earnings > 0 && (
-          <div className={`absolute -top-4 left-1/2 -translate-x-1/2 text-white text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)] flex items-center gap-1 ${label.includes('Diff') ? '!bg-green-800' : badgeColorClass} z-20 whitespace-nowrap border border-white/20`}>
-            {!parentId ? <Coins size={12} className="sm:w-3.5 sm:h-3.5" /> : (label.includes('Royalty') ? <Coins size={12} className="sm:w-3.5 sm:h-3.5" /> : <ArrowRight className="rotate-[-90deg] w-3 h-3 sm:w-3.5 sm:h-3.5" size={12} />)}
+          <div className={`absolute -top-4 left-1/2 -translate-x-1/2 text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)] flex items-center gap-1 ${label.includes('Diff') ? '!bg-green-800' : badgeColorClass} z-20 whitespace-nowrap border border-white/20`}>
+            {!parentId ? <Coins size={14} className="sm:w-4 sm:h-4" /> : (label.includes('Royalty') ? <Coins size={14} className="sm:w-4 sm:h-4" /> : <ArrowRight className="rotate-[-90deg] w-3.5 h-3.5 sm:w-4 sm:h-4" size={14} />)}
             <span>{label}: +{Math.floor(earnings)}€</span>
           </div>
         )}
@@ -182,7 +183,7 @@ const TreeNode = ({
 
         {/* Name Input */}
         <input
-          className="w-full bg-transparent font-bold text-white text-xs mb-1 focus:outline-none placeholder-white/30 truncate"
+          className="w-full bg-transparent font-bold text-white text-base mb-1 focus:outline-none placeholder-white/30 truncate"
           value={member.name}
           onChange={(e) => onUpdate(member.id, { name: e.target.value })}
           placeholder="Nome..."
@@ -190,7 +191,7 @@ const TreeNode = ({
 
         {/* Level Select */}
         <select
-          className="w-full bg-black/20 text-white rounded text-[10px] p-1 mb-2 border border-white/10 focus:ring-0 cursor-pointer appearance-none hover:bg-black/30 transition-colors"
+          className="w-full bg-black/20 text-white rounded text-xs p-1.5 mb-2 border border-white/10 focus:ring-0 cursor-pointer appearance-none hover:bg-black/30 transition-colors font-medium"
           value={member.level}
           onChange={(e) => onUpdate(member.id, { level: e.target.value as HerbalifeLevel })}
         >
@@ -208,11 +209,11 @@ const TreeNode = ({
         </select>
 
         {/* PV Input */}
-        <div className="flex items-center justify-between bg-black/20 rounded px-2 py-1 border border-white/5">
-          <span className="text-[9px] text-white/70 font-medium">PV:</span>
+        <div className="flex items-center justify-between bg-black/20 rounded px-2 py-1.5 border border-white/5">
+          <span className="text-[10px] text-white/70 font-medium mr-2">PV:</span>
           <input
             type="number"
-            className="w-12 bg-transparent text-right font-bold text-xs text-white focus:outline-none"
+            className="w-16 bg-transparent text-right font-bold text-sm text-white focus:outline-none"
             value={member.pv === 0 ? '' : member.pv}
             placeholder="0"
             onChange={(e) => onUpdate(member.id, { pv: parseInt(e.target.value) || 0 })}
@@ -256,7 +257,7 @@ const TreeNode = ({
 
 // ... Rest of the file
 const ORDERED_LEVELS: HerbalifeLevel[] = [
-  'Member', 'Senior Consultant', 'Qualified Producer', 'Supervisor',
+  'Member', 'Senior Consultant', 'Success Builder', 'Qualified Producer', 'Supervisor',
   'World Team', 'Active World Team', 'GET', 'GET 2.5',
   'Millionaire', 'Millionaire 7.5', 'President'
 ];
