@@ -408,7 +408,7 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                     <div className="flex flex-col items-center gap-2 justify-end pb-1">
                         <button
                             onClick={() => {
-                                onUpdatePersonalPv(4000); // Reset to Supervisor
+                                onUpdatePersonalPv(0); // Reset to 0 (Supervisor Status preserved by logic)
                                 onUpdateDirects(0);
                                 onUpdateIndirects(0);
                                 onUpdateDepth(3);
