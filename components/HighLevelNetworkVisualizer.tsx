@@ -79,38 +79,45 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                 });
             }
         } else {
-            // PYRAMID LAYOUT (Vertical Tree)
-            // Rules:
-            // - Level 0: Root (Top Center)
-            // - Levels 1..Depth: Rows of dots.
-            // - Size decreases with level.
-            // - We simulate a "fan" or "triangle".
-
+            // NETWORK LAYOUT (Formerly Pyramid)
             // Root
             newNodes.push({ id: 'root', x: 0, y: -250, level: 0 }); // Start higher up
 
             // Generate levels
-            const maxLevels = Math.min(depth + 1, 8); // user asked for at least 8, limit to avoid crash
+            const maxLevels = Math.min(depth + 1, 8);
             let currentY = -120; // Start below root
 
             for (let l = 1; l < maxLevels; l++) {
-                // For visual pyramid, we don't render ALL actual nodes (exponential explosion).
-                // We render a representative row.
-                // Width increases with level? Or just a fixed wider row?
-                // Let's make a "triangle" shape.
-                const nodesInRow = Math.min(Math.pow(2, l) + 2, 16); // Fake counts for visuals: 4, 6, 8... max 16
-                const rowWidth = 600 + (l * 50);
-                const spacing = rowWidth / nodesInRow;
+                // Logic:
+                // l=1 depends on directs
+                // l>1 depends on directs AND indirects
 
-                for (let i = 0; i < nodesInRow; i++) {
-                    const offsetX = (i - (nodesInRow - 1) / 2) * spacing;
-                    newNodes.push({
-                        id: `l${l}-${i}`,
-                        x: offsetX,
-                        y: currentY,
-                        level: l,
-                        indirectsCount: 0 // No satellites in pyramid mode
-                    });
+                let countForLevel = 0;
+                if (l === 1) {
+                    countForLevel = directs;
+                } else {
+                    if (directs > 0 && indirects > 0) {
+                        // Visual growth capped at 16
+                        countForLevel = Math.min(directs * l + (indirects * 2), 16);
+                    } else {
+                        countForLevel = 0;
+                    }
+                }
+
+                if (countForLevel > 0) {
+                    const rowWidth = 600 + (l * 50); // Expanding width
+                    const spacing = rowWidth / Math.max(countForLevel, 1);
+
+                    for (let i = 0; i < countForLevel; i++) {
+                        const offsetX = (i - (countForLevel - 1) / 2) * spacing;
+                        newNodes.push({
+                            id: `l${l}-${i}`,
+                            x: offsetX,
+                            y: currentY,
+                            level: l,
+                            indirectsCount: 0
+                        });
+                    }
                 }
                 currentY += 80; // Vertical spacing
             }
@@ -259,7 +266,7 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                         onClick={() => setViewMode('pyramid')}
                         className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'pyramid' ? 'bg-white text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
                     >
-                        PIRAMIDE
+                        NETWORK
                     </button>
                 </div>
 
