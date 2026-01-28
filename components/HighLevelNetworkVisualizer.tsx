@@ -385,8 +385,8 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                     <div className="flex flex-col items-center gap-2 justify-end pb-1">
                         <button
                             onClick={() => {
-                                onUpdateDirects(3);
-                                onUpdateIndirects(3);
+                                onUpdateDirects(0);
+                                onUpdateIndirects(0);
                                 onUpdateDepth(3);
                                 onUpdatePvPerUser(100);
                             }}
