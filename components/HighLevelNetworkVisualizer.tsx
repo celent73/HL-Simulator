@@ -10,12 +10,14 @@ interface VisualizerProps {
     pvPerUser: number;
     personalPv: number;
     bonusPercent: number;
+    royaltyPercent: number; // NEW
     totalEarnings: number;
     totalVolume: number;
     onUpdateDirects: (val: number) => void;
     onUpdateIndirects: (val: number) => void;
     onUpdateDepth: (val: number) => void;
     onUpdatePvPerUser: (val: number) => void;
+    onUpdatePersonalPv: (val: number) => void; // NEW
 }
 
 interface NodePosition {
@@ -36,12 +38,14 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
     pvPerUser = 100,
     personalPv = 500,
     bonusPercent = 0,
+    royaltyPercent = 0,
     totalEarnings = 0,
     totalVolume = 0,
     onUpdateDirects,
     onUpdateIndirects,
     onUpdateDepth,
-    onUpdatePvPerUser
+    onUpdatePvPerUser,
+    onUpdatePersonalPv
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [nodes, setNodes] = useState<NodePosition[]>([]);
@@ -222,6 +226,7 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
         if (bonusPercent === 6) return { name: 'PRESIDENT TEAM', color: 'from-amber-700 to-yellow-500', icon: <Award size={24} /> };
         if (bonusPercent === 4) return { name: 'MILLIONAIRE TEAM', color: 'from-emerald-600 to-teal-400', icon: <Shield size={24} /> };
         if (bonusPercent === 2) return { name: 'GET TEAM', color: 'from-red-600 to-pink-600', icon: <ArrowUpRight size={24} /> };
+        if (totalVolume >= 10000) return { name: 'WORLD TEAM', color: 'from-emerald-500 to-green-500', icon: <Star size={24} /> }; // ADDED
         if (totalVolume >= 4000) return { name: 'SUPERVISOR', color: 'from-green-500 to-lime-400', icon: <Star size={24} /> };
         return { name: 'DISTRIBUTOR', color: 'from-blue-500 to-cyan-400', icon: <Users size={24} /> };
     };
@@ -250,9 +255,15 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                     <div>
                         <h2 className="text-xl md:text-2xl font-black text-white tracking-tight uppercase flex items-center gap-2">
                             {rank.name}
-                            {bonusPercent > 0 && <span className="px-2 py-0.5 bg-white/20 rounded text-sm font-bold">+{bonusPercent}%</span>}
+                            {bonusPercent > 0 && <span className="px-2 py-0.5 bg-white/20 rounded text-sm font-bold">BONUS {bonusPercent}%</span>}
                         </h2>
-                        <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide">VISUALIZZATORE RETE PLUS</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide">VISUALIZZATORE RETE PLUS</p>
+                            {/* Royalty Badge */}
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                ROYALTY {royaltyPercent}%
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -355,6 +366,16 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
             {/* FOOTER CONTROLS - RESPONSIVE */}
             <div className="absolute bottom-6 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-auto z-[60] pointer-events-none flex justify-center">
                 <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-4 rounded-3xl shadow-2xl pointer-events-auto flex flex-wrap justify-center gap-4 max-w-full overflow-x-auto">
+                    {/* TUO PV Control - NEW */}
+                    <ControlGroup
+                        label="TUO PV"
+                        value={personalPv}
+                        onChange={onUpdatePersonalPv}
+                        step={100} min={0}
+                        color="text-purple-400"
+                    />
+                    <div className="w-px h-8 bg-white/10 hidden md:block"></div>
+
                     <ControlGroup
                         label="DIRETTI"
                         value={directs}
@@ -387,6 +408,7 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                     <div className="flex flex-col items-center gap-2 justify-end pb-1">
                         <button
                             onClick={() => {
+                                onUpdatePersonalPv(4000); // Reset to Supervisor
                                 onUpdateDirects(0);
                                 onUpdateIndirects(0);
                                 onUpdateDepth(3);
@@ -406,9 +428,9 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
 };
 
 // Helper Component for Controls
-const ControlGroup = ({ label, value, onChange, min = 0, max = 10000, step = 1 }: any) => (
+const ControlGroup = ({ label, value, onChange, min = 0, max = 10000, step = 1, color = "text-gray-400" }: any) => (
     <div className="flex flex-col items-center gap-2 min-w-[80px]">
-        <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">{label}</span>
+        <span className={`text-[10px] font-bold ${color} tracking-widest uppercase`}>{label}</span>
         <div className="flex items-center gap-3 bg-white/5 rounded-lg p-1">
             <button
                 onClick={() => onChange(Math.max(min, value - step))}
@@ -416,7 +438,7 @@ const ControlGroup = ({ label, value, onChange, min = 0, max = 10000, step = 1 }
             >
                 -
             </button>
-            <span className="w-8 text-center font-bold text-white text-sm">{value}</span>
+            <span className="w-10 text-center font-bold text-white text-sm">{value}</span> {/* Widened for 4-digit PV */}
             <button
                 onClick={() => onChange(Math.min(max, value + step))}
                 className="w-8 h-8 flex items-center justify-center rounded-md bg-white/5 hover:bg-white/10 text-white transition-colors active:bg-white/20"
