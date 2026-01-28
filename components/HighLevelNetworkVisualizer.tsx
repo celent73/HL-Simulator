@@ -256,10 +256,10 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                     <div>
                         <h2 className="text-xl md:text-2xl font-black text-white tracking-tight uppercase flex items-center gap-2">
                             {rank.name}
-                            {bonusPercent > 0 && <span className="px-2 py-0.5 bg-white/20 rounded text-sm font-bold">BONUS {bonusPercent}%</span>}
+                            {bonusPercent > 0 && <span className="px-2 py-0.5 bg-white/20 rounded text-[10px] md:text-sm font-bold">BONUS {bonusPercent}%</span>}
                         </h2>
                         <div className="flex items-center gap-2">
-                            <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide">VISUALIZZATORE RETE PLUS</p>
+                            <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide hidden md:block">VISUALIZZATORE RETE PLUS</p>
                             {/* Royalty Badge */}
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
                                 ROYALTY {royaltyPercent}%
@@ -268,8 +268,8 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                     </div>
                 </div>
 
-                {/* ZOOM CONTROLS - NEW */}
-                <div className="pointer-events-auto flex gap-1 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10 mr-2">
+                {/* ZOOM CONTROLS - NEW (Hidden on Mobile) */}
+                <div className="hidden md:flex pointer-events-auto gap-1 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10 mr-2">
                     <button
                         onClick={() => setZoom(z => Math.max(0.2, z - 0.1))}
                         className="w-8 h-8 flex items-center justify-center rounded-md text-white hover:bg-white/20 transition-all active:scale-95"
