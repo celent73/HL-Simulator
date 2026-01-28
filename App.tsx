@@ -32,6 +32,7 @@ import SunIcon from './components/icons/SunIcon';
 import MoonIcon from './components/icons/MoonIcon';
 import { ItalyFlag, GermanyFlag, SpainFlag, UKFlag } from './components/icons/Flags';
 import CrownIconSVG from './components/icons/CrownIcon';
+import { SpiderWebIcon } from './components/icons/SpiderWebIcon';
 import BackgroundMesh from './components/BackgroundMesh';
 import DisclaimerModal from './components/DisclaimerModal';
 import PaymentSuccessModal from './components/PaymentSuccessModal';
@@ -259,7 +260,7 @@ const AppContent = () => {
                 title={t('visualizer.title')}
               >
                 <div className="flex gap-1 items-center">
-                  <span className="text-lg">🕸️</span>
+                  <span className="text-lg"><SpiderWebIcon className="w-5 h-5 text-white" /></span>
                   <span className="hidden sm:inline">{t('visualizer.title')}</span>
                 </div>
               </button>
