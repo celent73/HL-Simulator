@@ -15,7 +15,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
     const [directs, setDirects] = useState<number>(3); // Utenti Diretti
     const [indiretti, setIndiretti] = useState<number>(3); // Utenti Indiretti (Duplicazione)
     const [pvPerUser, setPvPerUser] = useState<number>(100); // Punti Volume per Utente
-    const [personalPv, setPersonalPv] = useState<number>(4000); // I Tuoi Punti Volume
+    const [personalPv, setPersonalPv] = useState<number>(0); // I Tuoi Punti Volume
     const [months, setMonths] = useState<number>(12); // Tempo di realizzazione
 
     const [depth, setDepth] = useState<number>(3); // Profondità

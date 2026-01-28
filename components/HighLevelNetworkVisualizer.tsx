@@ -227,8 +227,8 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
         if (bonusPercent === 4) return { name: 'MILLIONAIRE TEAM', color: 'from-emerald-600 to-teal-400', icon: <Shield size={24} /> };
         if (bonusPercent === 2) return { name: 'GET TEAM', color: 'from-red-600 to-pink-600', icon: <ArrowUpRight size={24} /> };
         if (totalVolume >= 10000) return { name: 'WORLD TEAM', color: 'from-emerald-500 to-green-500', icon: <Star size={24} /> }; // ADDED
-        if (totalVolume >= 4000) return { name: 'SUPERVISOR', color: 'from-green-500 to-lime-400', icon: <Star size={24} /> };
-        return { name: 'DISTRIBUTOR', color: 'from-blue-500 to-cyan-400', icon: <Users size={24} /> };
+        // Default to SUPERVISOR for Plan 2 (as per user request "partire da supervisore")
+        return { name: 'SUPERVISOR', color: 'from-green-500 to-lime-400', icon: <Star size={24} /> };
     };
     const rank = getRankInfo();
 
@@ -371,7 +371,7 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                         label="TUO PV"
                         value={personalPv}
                         onChange={onUpdatePersonalPv}
-                        step={100} min={0}
+                        step={500} min={0} // Step 500 as requested
                         color="text-purple-400"
                     />
                     <div className="w-px h-8 bg-white/10 hidden md:block"></div>
