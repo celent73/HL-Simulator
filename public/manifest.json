@@ -1,6 +1,6 @@
 {
-  "short_name": "Simulatore Sharing",
-  "name": "Simulatore Sharing",
+  "short_name": "HL Simulator",
+  "name": "HL Simulator",
   "id": "union-sim-offline-ready-v2",
   "start_url": ".",
   "scope": "/",
