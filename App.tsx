@@ -210,13 +210,17 @@ const AppContent = () => {
 
         {/* HEADER */}
         {/* HEADER */}
-        <header className={`flex flex-col gap-4 mb-8 rounded-3xl p-6 border-0 transition-all duration-500 relative z-20`}
+        <header className={`flex flex-col gap-4 mb-8 rounded-3xl p-6 border-2 transition-all duration-500 relative z-20`}
           style={{
             background: 'linear-gradient(135deg, #1aa44a 0%, #009246 100%)',
             boxShadow: language === 'it' ? '0 25px 90px -10px rgba(34, 197, 94, 0.9)' :
               language === 'es' ? '0 25px 90px -10px rgba(239, 68, 68, 0.9)' :
                 language === 'de' ? '0 25px 90px -10px rgba(234, 179, 8, 0.9)' :
-                  '0 25px 90px -10px rgba(59, 130, 246, 0.9)'
+                  '0 25px 90px -10px rgba(59, 130, 246, 0.9)',
+            borderColor: language === 'it' ? 'rgba(34, 197, 94, 0.8)' :
+              language === 'es' ? 'rgba(239, 68, 68, 0.8)' :
+                language === 'de' ? 'rgba(234, 179, 8, 0.8)' :
+                  'rgba(59, 130, 246, 0.8)'
           }}
         >
 
