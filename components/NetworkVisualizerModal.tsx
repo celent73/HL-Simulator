@@ -289,30 +289,43 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
       return 'Member';
     };
 
-    const processNodes = (nodes: DownlineMember[]): DownlineMember[] => {
-      return nodes.map(node => {
-        const properLevel = getLevelFromPV(node.pv);
-        let updatedChildren = node.children;
+    // Recursive function to calculate volume and update level
+    // Returns { node: updatedNode, groupVolume: number, changed: boolean }
+    const processNode = (node: DownlineMember): { node: DownlineMember, groupVolume: number, changed: boolean } => {
+      let childChanged = false;
+      let childrenVolume = 0;
+      let improvedChildren: DownlineMember[] = [];
 
-        if (node.children && node.children.length > 0) {
-          const processedChildren = processNodes(node.children);
-          if (processedChildren !== node.children) {
-            updatedChildren = processedChildren;
-          }
-        }
+      if (node.children && node.children.length > 0) {
+        improvedChildren = node.children.map(child => {
+          const result = processNode(child);
+          if (result.changed) childChanged = true;
+          childrenVolume += result.groupVolume;
+          return result.node;
+        });
+      }
 
-        // Only update if level matches the rule (Auto Mode enforces rule)
-        // But we must allow manual override? No, user said "in base ai punti sale di livello".
-        if (node.level !== properLevel || updatedChildren !== node.children) {
-          hasChanges = true;
-          return { ...node, level: properLevel, children: updatedChildren || [] };
-        }
+      const groupVolume = node.pv + childrenVolume;
+      const properLevel = getLevelFromPV(groupVolume);
 
-        return node;
-      });
+      // Check if we need to update this node
+      if (node.level !== properLevel || childChanged) {
+        return {
+          node: { ...node, level: properLevel, children: improvedChildren },
+          groupVolume,
+          changed: true
+        };
+      }
+
+      return { node: node, groupVolume, changed: false };
     };
 
-    const newNetwork = processNodes(network);
+    // Run process on all root nodes
+    const newNetwork = network.map(root => {
+      const result = processNode(root);
+      if (result.changed) hasChanges = true;
+      return result.node;
+    });
 
     if (hasChanges) {
       setNetwork(newNetwork);
