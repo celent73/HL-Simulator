@@ -9,15 +9,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 // ... imports
 
-// ... inside App component
-const toggleLanguage = () => {
-  setLanguage((prev: Language) => {
-    if (prev === 'it') return 'en';
-    if (prev === 'en') return 'es';
-    if (prev === 'es') return 'de';
-    return 'it';
-  });
-};
+
 import { supabase, supabaseUrl } from './utils/supabaseClient';
 import { HerbalifePlanInput } from './types'; // UPDATED IMPORT
 import { useHerbalifeLogic } from './hooks/useHerbalifeLogic'; // UPDATED IMPORTS
@@ -38,7 +30,7 @@ import { InAppBrowserOverlay } from './components/InAppBrowserOverlay';
 import { Lock, Download, ExternalLink, Trophy, Users } from 'lucide-react'; // UPDATED IMPORT
 import SunIcon from './components/icons/SunIcon';
 import MoonIcon from './components/icons/MoonIcon';
-import { ItalyFlag, GermanyFlag } from './components/icons/Flags';
+import { ItalyFlag, GermanyFlag, SpainFlag, UKFlag } from './components/icons/Flags';
 import CrownIconSVG from './components/icons/CrownIcon';
 import BackgroundMesh from './components/BackgroundMesh';
 import DisclaimerModal from './components/DisclaimerModal';
@@ -185,11 +177,11 @@ const AppContent = () => {
 
   const currentFlag = useMemo(() => {
     switch (language) {
-      case 'it': return '🇮🇹';
-      case 'en': return '🇬🇧';
-      case 'es': return '🇪🇸';
-      case 'de': return '🇩🇪';
-      default: return '🇮🇹';
+      case 'it': return <ItalyFlag />;
+      case 'en': return <UKFlag />;
+      case 'es': return <SpainFlag />;
+      case 'de': return <GermanyFlag />;
+      default: return <ItalyFlag />;
     }
   }, [language]);
 
@@ -217,8 +209,24 @@ const AppContent = () => {
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 relative z-10 flex-grow">
 
         {/* HEADER */}
-        <header className="flex flex-col gap-4 mb-8 rounded-3xl p-6 border-0 shadow-xl backdrop-blur-xl transition-all duration-500 relative overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, #1aa44a 0%, #009246 100%)', boxShadow: '0 10px 30px -5px rgba(22, 163, 74, 0.5)' }}>
+        {/* HEADER */}
+        <header className={`flex flex-col gap-4 mb-8 rounded-3xl p-6 border-0 shadow-xl backdrop-blur-xl transition-all duration-500 relative overflow-hidden`}
+          style={{
+            background: 'linear-gradient(135deg, #1aa44a 0%, #009246 100%)',
+            boxShadow: language === 'it' ? '0 10px 40px -5px rgba(34, 197, 94, 0.6)' :
+              language === 'es' ? '0 10px 40px -5px rgba(239, 68, 68, 0.6)' :
+                language === 'de' ? '0 10px 40px -5px rgba(234, 179, 8, 0.6)' :
+                  '0 10px 40px -5px rgba(59, 130, 246, 0.6)' // en/default
+          }}
+        >
+          {/* Flag Background Glow Effect */}
+          {/* Flag Background Glow Effect - INTENSIFIED */}
+          <div className={`absolute top-0 right-0 w-80 h-80 blur-3xl rounded-full opacity-70 pointer-events-none -translate-y-1/2 translate-x-1/3 transition-colors duration-500 ${language === 'it' ? 'bg-green-500' :
+            language === 'es' ? 'bg-red-500' :
+              language === 'de' ? 'bg-yellow-400' :
+                'bg-blue-500'
+            }`}></div>
+
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-4xl font-extrabold text-white drop-shadow-sm flex items-center gap-3">
@@ -233,8 +241,8 @@ const AppContent = () => {
                 {isDarkMode ? <SunIcon /> : <MoonIcon />}
               </button>
 
-              <button onClick={toggleLanguage} className="p-2 rounded-xl bg-white/20 text-white hover:bg-white/30 transition shadow-lg backdrop-blur-sm text-xl" title="Cambia Lingua">
-                {currentFlag}
+              <button onClick={toggleLanguage} className="p-2 rounded-xl bg-white/20 text-white hover:bg-white/30 transition shadow-lg backdrop-blur-sm text-2xl flex items-center justify-center min-w-[44px]" title="Cambia Lingua">
+                <span className="drop-shadow-md filter">{currentFlag}</span>
               </button>
 
               {/* Herby Assistant Icon - Improved Style */}
@@ -249,23 +257,21 @@ const AppContent = () => {
 
               {/* NEW: Magic Target Button */}
 
-
-
               <button
                 onClick={() => setIsNetworkVisualizerOpen(true)}
                 className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-4 sm:py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl shadow-lg hover:shadow-purple-500/30 transition-all border-0 font-bold text-sm hover:scale-[1.05]"
-                title="Visualizzatore Rete"
+                title={t('visualizer.title')}
               >
                 <div className="flex gap-1 items-center">
                   <span className="text-lg">🕸️</span>
-                  <span className="hidden sm:inline">Visualizzatore Rete</span>
+                  <span className="hidden sm:inline">{t('visualizer.title')}</span>
                 </div>
               </button>
 
               {/* UNLOCK BTN REMOVED as per request */}
             </div>
           </div>
-          <p className="text-green-50 text-sm font-medium mt-2">Simula il piano marketing, calcola i PV e pianifica la tua scalata al successo!</p>
+          <p className="text-green-50 text-sm font-medium mt-2">{t('app.subtitle')}</p>
         </header>
 
         {/* MARKETING PLAN SELECTOR */}
@@ -279,7 +285,7 @@ const AppContent = () => {
                 }`}
             >
               <span className="text-lg">📊</span>
-              Piano Marketing 1
+              {t('marketing_plan_2.plan_1')}
             </button>
             <button
               onClick={() => setActivePlan('plan2')}
@@ -289,7 +295,7 @@ const AppContent = () => {
                 }`}
             >
               <span className="text-lg">🚀</span>
-              Piano Marketing 2
+              {t('marketing_plan_2.plan_2')}
             </button>
           </div>
         </div>

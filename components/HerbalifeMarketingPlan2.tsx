@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 // import { X, Users, RefreshCw, Layers, TrendingUp } from 'lucide-react';
 import HighLevelNetworkVisualizer from './HighLevelNetworkVisualizer';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface MarketingPlan2Props {
     // No props needed usually if it's standalone in the layout, 
@@ -8,6 +9,8 @@ interface MarketingPlan2Props {
 }
 
 const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
+    const { t } = useLanguage();
+
     // Inputs
     const [directs, setDirects] = useState<number>(3); // Utenti Diretti
     const [indiretti, setIndiretti] = useState<number>(3); // Utenti Indiretti (Duplicazione)
@@ -203,14 +206,14 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
 
                 {/* header with Reset */}
                 <div className="flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
-                    <h3 className="font-black text-gray-800 dark:text-white pl-2">Impostazioni</h3>
+                    <h3 className="font-black text-gray-800 dark:text-white pl-2">{t('marketing_plan_2.settings')}</h3>
                     <button
                         onClick={handleReset}
                         className="p-3 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors shadow-sm flex items-center gap-2 group"
                     >
                         {/* Simple icon SVG if lucide not imported, or just text if icon is preferred */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-rotate-180 transition-transform duration-500"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12" /><path d="M3 3v9h9" /></svg>
-                        <span className="text-xs font-bold uppercase tracking-wider">Azzera</span>
+                        <span className="text-xs font-bold uppercase tracking-wider">{t('marketing_plan_2.reset')}</span>
                     </button>
                 </div>
 
@@ -221,8 +224,8 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                             <span className="text-xl">🏆</span>
                         </div>
                         <div>
-                            <span className="text-sm font-black uppercase tracking-widest text-gray-800 dark:text-white">La Tua Scalata</span>
-                            <span className="text-xs text-gray-400 font-bold block">Obiettivo: President Team</span>
+                            <span className="text-sm font-black uppercase tracking-widest text-gray-800 dark:text-white">{t('marketing_plan_2.your_climb')}</span>
+                            <span className="text-xs text-gray-400 font-bold block">{t('marketing_plan_2.goal')}: President Team</span>
                         </div>
                     </div>
 
@@ -244,7 +247,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                                                     <span className={`text-sm font-black ${highestQualified.color}`}>✓</span>
                                                 </div>
                                                 <div>
-                                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-0.5">Qualifica Raggiunta</span>
+                                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-0.5">{t('marketing_plan_2.reached')}</span>
                                                     <span className={`font-black text-lg uppercase tracking-wide ${highestQualified.color === 'text-white' ? 'text-white' : 'text-gray-900'} drop-shadow-sm`}>
                                                         {highestQualified.name}
                                                     </span>
@@ -268,7 +271,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                                                     <span className="text-sm font-black text-gray-300">Start</span>
                                                 </div>
                                                 <div>
-                                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-0.5">Stato Attuale</span>
+                                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-0.5">{t('marketing_plan_2.current_status')}</span>
                                                     <span className="font-black text-lg uppercase tracking-wide text-gray-500 dark:text-gray-400">
                                                         Member
                                                     </span>
@@ -292,25 +295,25 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                             <span className="text-xl">👑</span>
                         </div>
                         <div>
-                            <span className="text-sm font-black uppercase tracking-widest block">Volume Totale</span>
-                            <span className="text-xs text-purple-400 font-bold">Personale + Gruppo ({royaltyPercent}%)</span>
+                            <span className="text-sm font-black uppercase tracking-widest block">{t('marketing_plan_2.total_volume')}</span>
+                            <span className="text-xs text-purple-400 font-bold">{t('marketing_plan_2.personal_plus_group')} ({royaltyPercent}%)</span>
                         </div>
 
                         {/* Info Icon & Tooltip */}
                         <div className="absolute top-10 left-0 w-72 p-4 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 text-left">
-                            <h4 className="font-black text-gray-900 dark:text-white mb-2 text-sm border-b pb-1">Definizioni Volume</h4>
+                            <h4 className="font-black text-gray-900 dark:text-white mb-2 text-sm border-b pb-1">{t('marketing_plan_2.volume_definitions')}</h4>
                             <div className="space-y-3 text-xs text-gray-600 dark:text-gray-300">
                                 <div>
-                                    <strong className="block text-purple-600">Volume Personale</strong>
-                                    Come Supervisore, tutto il Volume fatto da te più quello dei Distributori di downline con sconto inferiore al 50%.
+                                    <strong className="block text-purple-600">{t('marketing_plan_2.personal_volume_def')}</strong>
+                                    {t('marketing_plan_2.personal_volume_desc')}
                                 </div>
                                 <div>
-                                    <strong className="block text-purple-600">Volume di Gruppo</strong>
-                                    Come Supervisore il tuo Volume di Gruppo è il Volume relativo ad ordini effettuati da Supervisori in Qualifica con una percentuale di sconto temporanea del 50%.
+                                    <strong className="block text-purple-600">{t('marketing_plan_2.group_volume_def')}</strong>
+                                    {t('marketing_plan_2.group_volume_desc')}
                                 </div>
                                 <div>
-                                    <strong className="block text-purple-600">Volume Totale</strong>
-                                    Come Supervisore il tuo Volume Totale è la somma del Volume Personale e del Volume di Gruppo.
+                                    <strong className="block text-purple-600">{t('marketing_plan_2.total_volume_def')}</strong>
+                                    {t('marketing_plan_2.total_volume_desc')}
                                 </div>
                             </div>
                         </div>
@@ -331,7 +334,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                         <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
                             <span className="text-xl">👤</span>
                         </div>
-                        <span className="text-sm font-black uppercase tracking-widest">Utenti Diretti</span>
+                        <span className="text-sm font-black uppercase tracking-widest">{t('marketing_plan_2.direct_users')}</span>
                     </div>
                     <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-2xl p-2">
                         <button onClick={() => setDirects(Math.max(1, directs - 1))} className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-white dark:hover:bg-gray-800 rounded-xl transition font-bold text-xl shadow-sm">-</button>
@@ -346,7 +349,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                         <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
                             <span className="text-xl">📝</span>
                         </div>
-                        <span className="text-sm font-black uppercase tracking-widest">Utenti Indiretti</span>
+                        <span className="text-sm font-black uppercase tracking-widest">{t('marketing_plan_2.indirect_users')}</span>
                     </div>
                     <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-2xl p-2">
                         <button onClick={() => setIndiretti(Math.max(1, indiretti - 1))} className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-white dark:hover:bg-gray-800 rounded-xl transition font-bold text-xl shadow-sm">-</button>
@@ -361,7 +364,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                         <div className="p-2 bg-pink-100 dark:bg-pink-900/30 rounded-xl">
                             <span className="text-xl">⏬</span>
                         </div>
-                        <span className="text-sm font-black uppercase tracking-widest">Profondità (Livelli)</span>
+                        <span className="text-sm font-black uppercase tracking-widest">{t('marketing_plan_2.depth')}</span>
                     </div>
 
                     <div className="px-2">
@@ -375,7 +378,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                                 </button>
                                 <div className="text-center">
                                     <span className="text-4xl font-black text-gray-800 dark:text-white">{depth}</span>
-                                    <span className="text-xs font-bold text-gray-400 uppercase mb-1 block">Livelli</span>
+                                    <span className="text-xs font-bold text-gray-400 uppercase mb-1 block">{t('marketing_plan_2.level_label')}</span>
                                 </div>
                                 <button
                                     onClick={() => setDepth(Math.min(maxDepthAllowed, depth + 1))}
@@ -402,7 +405,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                         <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl">
                             <span className="text-xl">📄</span>
                         </div>
-                        <span className="text-sm font-black uppercase tracking-widest">Punti Volume per Utente</span>
+                        <span className="text-sm font-black uppercase tracking-widest">{t('marketing_plan_2.pv_per_user')}</span>
                     </div>
                     <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-2xl p-2">
                         <button onClick={() => setPvPerUser(Math.max(0, pvPerUser - 25))} className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-white dark:hover:bg-gray-800 rounded-xl transition font-bold text-xl shadow-sm">-</button>
@@ -417,14 +420,14 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                         <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-xl">
                             <span className="text-xl">⏱️</span>
                         </div>
-                        <span className="text-sm font-black uppercase tracking-widest">Tempo di Realizzazione (Mesi)</span>
+                        <span className="text-sm font-black uppercase tracking-widest">{t('marketing_plan_2.time_months')}</span>
                     </div>
 
                     {/* Range Slider style */}
                     <div className="px-2">
                         <div className="flex justify-between items-end mb-2">
                             <span className="text-4xl font-black text-red-500">{months}</span>
-                            <span className="text-xs font-bold text-red-400 uppercase mb-1">Mesi</span>
+                            <span className="text-xs font-bold text-red-400 uppercase mb-1">{t('marketing_plan_2.months_label')}</span>
                         </div>
                         <input
                             type="range"
@@ -450,8 +453,8 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                                 <span className="text-2xl">📊</span>
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-gray-900 dark:text-white">Riepilogo Guadagni per Livello</h2>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mt-1">Simulazione Proiezione Supervisori</p>
+                                <h2 className="text-2xl font-black text-gray-900 dark:text-white">{t('marketing_plan_2.table_title')}</h2>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mt-1">{t('marketing_plan_2.table_subtitle')}</p>
                             </div>
                         </div>
                         <button
@@ -466,12 +469,12 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="text-xs uppercase tracking-widest text-gray-400 border-b-2 border-gray-100 dark:border-gray-700">
-                                    <th className="pb-6 pl-4 font-bold">Livello</th>
-                                    <th className="pb-6 font-bold">Utenti</th>
-                                    <th className="pb-6 font-bold">Volume Totale</th>
-                                    <th className="pb-6 font-bold">Guadagno %</th>
-                                    <th className="pb-6 font-bold">Guadagno Mensile</th>
-                                    <th className="pb-6 font-bold">Guadagno Annuo</th>
+                                    <th className="pb-6 pl-4 font-bold">{t('marketing_plan_2.table_level')}</th>
+                                    <th className="pb-6 font-bold">{t('marketing_plan_2.table_users')}</th>
+                                    <th className="pb-6 font-bold">{t('marketing_plan_2.table_volume')}</th>
+                                    <th className="pb-6 font-bold">{t('marketing_plan_2.table_earnings_pct')}</th>
+                                    <th className="pb-6 font-bold">{t('marketing_plan_2.table_monthly')}</th>
+                                    <th className="pb-6 font-bold">{t('marketing_plan_2.table_yearly')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50 dark:divide-gray-700/50">
@@ -508,7 +511,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                             </tbody>
                             <tfoot className="border-t-2 border-gray-100 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-800/50">
                                 <tr>
-                                    <td className="p-5 font-black text-gray-400 uppercase text-xs tracking-widest">Totali</td>
+                                    <td className="p-5 font-black text-gray-400 uppercase text-xs tracking-widest">{t('marketing_plan_2.table_totals')}</td>
                                     <td className="p-5 font-bold text-xl text-gray-800 dark:text-white">{rows.totalUsers + 1}</td> {/* +1 for Tu */}
                                     <td className="p-5 font-bold text-xl text-blue-700 dark:text-blue-400">{(rows.totalVolume + pvPerUser).toLocaleString()} PV</td>
                                     <td></td>
@@ -529,7 +532,7 @@ const HerbalifeMarketingPlan2: React.FC<MarketingPlan2Props> = () => {
                 {/* Projection Summary based on Time */}
                 <div className="mt-6 flex justify-end">
                     <div className="bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 px-6 py-3 rounded-2xl flex items-center gap-3 font-bold border border-orange-200 dark:border-orange-800">
-                        <span>🎯 Proiezione a {months} Mesi:</span>
+                        <span>🎯 {t('marketing_plan_2.projection')} {months} {t('marketing_plan_2.months_label')}:</span>
                         <span className="text-2xl">{(rows.totalEarnings * months).toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })}</span>
                     </div>
                 </div>

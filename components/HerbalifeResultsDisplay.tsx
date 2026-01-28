@@ -2,6 +2,7 @@ import React from 'react';
 import { HerbalifeResult } from '../types';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Euro, TrendingUp, Users, Crown, Clock } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface HerbalifeResultsDisplayProps {
     result: HerbalifeResult;
@@ -9,6 +10,7 @@ interface HerbalifeResultsDisplayProps {
 }
 
 const HerbalifeResultsDisplay: React.FC<HerbalifeResultsDisplayProps> = ({ result, isFullScreen }) => {
+    const { t } = useLanguage();
     const chartData = [
         {
             name: result.currentLevel,
@@ -35,10 +37,10 @@ const HerbalifeResultsDisplay: React.FC<HerbalifeResultsDisplayProps> = ({ resul
                 <div className="relative z-10">
                     <div className="flex justify-between items-start">
                         <div>
-                            <p className="text-green-100 font-medium mb-1">Guadagno Totale Stimato</p>
-                            <h2 className="text-4xl md:text-5xl font-extrabold mb-1">{formatCurrency(result.totalEarnings)}<span className="text-lg opacity-80 font-normal">/mese</span></h2>
+                            <p className="text-green-100 font-medium mb-1">{t('herbalife_results.total_earnings_title')}</p>
+                            <h2 className="text-4xl md:text-5xl font-extrabold mb-1">{formatCurrency(result.totalEarnings)}<span className="text-lg opacity-80 font-normal">{t('herbalife_results.per_month')}</span></h2>
                             <p className="text-sm text-green-200 opacity-90">
-                                Fatturato Stimato: <span className="font-bold">{formatCurrency(result.turnover)}</span>
+                                {t('herbalife_results.turnover_title')}: <span className="font-bold">{formatCurrency(result.turnover)}</span>
                             </p>
                         </div>
                         <div className="flex flex-col items-end gap-2">
@@ -47,14 +49,14 @@ const HerbalifeResultsDisplay: React.FC<HerbalifeResultsDisplayProps> = ({ resul
                                     result.currentLevel === 'Supervisor' ? 'bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-300 text-yellow-900 border-2 border-yellow-200 animate-pulse shadow-yellow-500/50' :
                                         'bg-white/20 text-white backdrop-blur-md'
                                 }`}>
-                                <p className="text-xs uppercase tracking-wider opacity-80 font-bold">Livello Attuale</p>
+                                <p className="text-xs uppercase tracking-wider opacity-80 font-bold">{t('herbalife_results.current_level')}</p>
                                 <p className="font-bold text-xl drop-shadow-sm">{result.currentLevel}</p>
-                                <p className="text-sm font-medium">Sconto {result.discountPercentage}%</p>
+                                <p className="text-sm font-medium">{t('herbalife_results.discount')} {result.discountPercentage}%</p>
                             </div>
                             {result.qualificationTime && (
                                 <div className="bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg text-xs flex items-center gap-1">
                                     <Clock size={12} />
-                                    <span>Tempo: {result.qualificationTime}</span>
+                                    <span>{t('herbalife_results.time_label')}: {result.qualificationTime}</span>
                                 </div>
                             )}
                         </div>
@@ -64,9 +66,9 @@ const HerbalifeResultsDisplay: React.FC<HerbalifeResultsDisplayProps> = ({ resul
                     {result.nextLevel && (
                         <div className="mt-6 bg-black/20 rounded-full p-1 md:w-2/3">
                             <div className="flex justify-between text-xs px-2 mb-1 opacity-90">
-                                <span>{result.pvToNextLevel} PV al livello {result.nextLevel}</span>
+                                <span>{result.pvToNextLevel} {t('herbalife_results.pv_to_next')} {result.nextLevel}</span>
                                 <div className="flex flex-col items-end">
-                                    <span>Next: {result.nextLevel}</span>
+                                    <span>{t('herbalife_results.next_label')}: {result.nextLevel}</span>
                                     {result.nextLevelQualificationTime && (
                                         <span className="opacity-70 text-[10px]">({result.nextLevelQualificationTime})</span>
                                     )}
@@ -87,27 +89,27 @@ const HerbalifeResultsDisplay: React.FC<HerbalifeResultsDisplayProps> = ({ resul
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-lg border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform duration-200 hover:scale-[1.02] cursor-pointer">
                     <div className="flex items-center gap-3 mb-3 text-blue-600 dark:text-blue-400">
                         <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg"><Euro size={20} /></div>
-                        <h3 className="font-bold">Guadagno Vendita Diretta</h3>
+                        <h3 className="font-bold">{t('herbalife_results.retail_profit_title')}</h3>
                     </div>
                     <p className="text-2xl font-bold dark:text-white">{formatCurrency(result.retailProfit)}</p>
-                    <p className="text-xs text-gray-500 mt-1">Margine su Retail ({result.discountPercentage}%)</p>
+                    <p className="text-xs text-gray-500 mt-1">{t('herbalife_results.retail_margin_label')} ({result.discountPercentage}%)</p>
                 </div>
 
                 {/* Wholesale Profit */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-lg border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform duration-200 hover:scale-[1.02] cursor-pointer">
                     <div className="flex items-center gap-3 mb-3 text-purple-600 dark:text-purple-400">
                         <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><Users size={20} /></div>
-                        <h3 className="font-bold">Intermediazione</h3>
+                        <h3 className="font-bold">{t('herbalife_results.wholesale_profit_title')}</h3>
                     </div>
                     <p className="text-2xl font-bold dark:text-white">{formatCurrency(result.wholesaleProfit)}</p>
-                    <p className="text-xs text-gray-500 mt-1">Differenza Sconto</p>
+                    <p className="text-xs text-gray-500 mt-1">{t('herbalife_results.wholesale_label')}</p>
                 </div>
 
                 {/* Royalties */}
                 <div className={`rounded-2xl p-5 shadow-lg border active:scale-95 transition-transform duration-200 hover:scale-[1.02] cursor-pointer ${result.royaltyEarnings > 0 ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white border-transparent' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700'}`}>
                     <div className="flex items-center gap-3 mb-3">
                         <div className={`p-2 rounded-lg ${result.royaltyEarnings > 0 ? 'bg-white/20' : 'bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400'}`}><Crown size={20} /></div>
-                        <h3 className={`font-bold ${result.royaltyEarnings > 0 ? 'text-white' : 'text-pink-600 dark:text-pink-400'}`}>Royalties (RO)</h3>
+                        <h3 className={`font-bold ${result.royaltyEarnings > 0 ? 'text-white' : 'text-pink-600 dark:text-pink-400'}`}>{t('herbalife_results.royalty_title')}</h3>
                     </div>
                     <p className={`text-2xl font-bold ${result.royaltyEarnings > 0 ? 'text-white' : 'dark:text-white'}`}>{formatCurrency(result.royaltyEarnings)}</p>
                     <p className={`text-xs mt-1 ${result.royaltyEarnings > 0 ? 'text-purple-100' : 'text-gray-500'}`}>
@@ -122,7 +124,7 @@ const HerbalifeResultsDisplay: React.FC<HerbalifeResultsDisplayProps> = ({ resul
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-white/20 rounded-lg"><TrendingUp size={20} /></div>
                                 <div>
-                                    <h3 className="font-bold">Production Bonus (PB)</h3>
+                                    <h3 className="font-bold">{t('herbalife_results.production_title')}</h3>
                                     <p className="text-xs text-yellow-50 opacity-90">Bonus di Produzione Infinito</p>
                                 </div>
                             </div>

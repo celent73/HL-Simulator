@@ -65,12 +65,12 @@ const HerbalifeInputPanel: React.FC<HerbalifeInputPanelProps> = ({ inputs, onInp
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20">
             <h2 className="text-2xl font-bold mb-6 flex items-center justify-between text-gray-800 dark:text-white">
                 <span className="flex items-center gap-2">
-                    <span className="text-3xl">📊</span> I Tuoi Dati
+                    <span className="text-3xl">📊</span> {t('herbalife_input.title')}
                 </span>
                 <button
                     onClick={() => handlePersonalChange('personalPV', 0)}
                     className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition"
-                    title="Resetta Dati Personali"
+                    title={t('herbalife_input.reset_tooltip')}
                 >
                     <Trash2 size={18} />
                 </button>
@@ -80,7 +80,7 @@ const HerbalifeInputPanel: React.FC<HerbalifeInputPanelProps> = ({ inputs, onInp
             <div className="space-y-6 mb-8">
                 <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl border border-green-100 dark:border-green-800 active:scale-95 transition-transform duration-200 hover:scale-[1.01] cursor-pointer">
                     <label className="block text-sm font-medium mb-2 text-green-800 dark:text-green-300">
-                        Punti Volume Personali (PV)
+                        {t('herbalife_input.personal_pv')}
                     </label>
                     <div className="flex items-center gap-3">
                         <button
@@ -129,7 +129,7 @@ const HerbalifeInputPanel: React.FC<HerbalifeInputPanelProps> = ({ inputs, onInp
                         <Users size={20} />
                     </div>
                     <div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Volume Organizzazione Totale</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">{t('visualizer.total_volume')}</p>
                         <p className="text-2xl font-black text-blue-700 dark:text-blue-300">{totalOrgVolume.toLocaleString()} PV</p>
                     </div>
                 </div>
@@ -159,7 +159,7 @@ const HerbalifeInputPanel: React.FC<HerbalifeInputPanelProps> = ({ inputs, onInp
                     onClick={addDownlineMember}
                     className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium text-sm shadow-lg active:scale-95"
                 >
-                    <Plus size={16} /> Aggiungi Membro
+                    <Plus size={16} /> {t('herbalife_input.add_member')}
                 </button>
             </div>
 
@@ -241,7 +241,7 @@ const HerbalifeInputPanel: React.FC<HerbalifeInputPanelProps> = ({ inputs, onInp
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-xs text-gray-500 mb-1 block">Livello</label>
+                                    <label className="text-xs text-gray-500 mb-1 block">{t('herbalife_input.level_label')}</label>
                                     <select
                                         value={member.level}
                                         onChange={(e) => updateDownlineMember(member.id, { level: e.target.value as HerbalifeLevel })}

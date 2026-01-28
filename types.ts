@@ -3,7 +3,7 @@
 
 // --- HERBALIFE SPECIFIC TYPES ---
 
-export type HerbalifeLevel = 'Member' | 'Senior Consultant' | 'Qualified Producer' | 'Supervisor' | 'World Team' | 'Active World Team' | 'GET' | 'GET 2.5' | 'Millionaire' | 'Millionaire 7.5' | 'President';
+export type HerbalifeLevel = 'Member' | 'Senior Consultant' | 'Success Builder' | 'Qualified Producer' | 'Supervisor' | 'World Team' | 'Active World Team' | 'GET' | 'GET 2.5' | 'Millionaire' | 'Millionaire 7.5' | 'President';
 
 export interface DownlineMember {
   id: string;

@@ -4,6 +4,7 @@ import { HerbalifeLevel } from '../types';
 export const DISCOUNTS: Record<HerbalifeLevel, number> = {
     'Member': 25,
     'Senior Consultant': 35,
+    'Success Builder': 42,
     'Qualified Producer': 42,
     'Supervisor': 50,
     'World Team': 50,
