@@ -210,22 +210,15 @@ const AppContent = () => {
 
         {/* HEADER */}
         {/* HEADER */}
-        <header className={`flex flex-col gap-4 mb-8 rounded-3xl p-6 border-0 shadow-xl backdrop-blur-xl transition-all duration-500 relative overflow-hidden`}
+        <header className={`flex flex-col gap-4 mb-8 rounded-3xl p-6 border-0 transition-all duration-500 relative z-20`}
           style={{
             background: 'linear-gradient(135deg, #1aa44a 0%, #009246 100%)',
-            boxShadow: language === 'it' ? '0 10px 40px -5px rgba(34, 197, 94, 0.6)' :
-              language === 'es' ? '0 10px 40px -5px rgba(239, 68, 68, 0.6)' :
-                language === 'de' ? '0 10px 40px -5px rgba(234, 179, 8, 0.6)' :
-                  '0 10px 40px -5px rgba(59, 130, 246, 0.6)' // en/default
+            boxShadow: language === 'it' ? '0 25px 90px -10px rgba(34, 197, 94, 0.9)' :
+              language === 'es' ? '0 25px 90px -10px rgba(239, 68, 68, 0.9)' :
+                language === 'de' ? '0 25px 90px -10px rgba(234, 179, 8, 0.9)' :
+                  '0 25px 90px -10px rgba(59, 130, 246, 0.9)'
           }}
         >
-          {/* Flag Background Glow Effect */}
-          {/* Flag Background Glow Effect - INTENSIFIED */}
-          <div className={`absolute top-0 right-0 w-80 h-80 blur-3xl rounded-full opacity-70 pointer-events-none -translate-y-1/2 translate-x-1/3 transition-colors duration-500 ${language === 'it' ? 'bg-green-500' :
-            language === 'es' ? 'bg-red-500' :
-              language === 'de' ? 'bg-yellow-400' :
-                'bg-blue-500'
-            }`}></div>
 
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
             <div className="flex items-center gap-3">
