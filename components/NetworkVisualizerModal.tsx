@@ -11,10 +11,10 @@ interface NetworkVisualizerModalProps {
 const LEVEL_COLORS: Record<HerbalifeLevel, string> = {
   'Member': 'from-gray-700 to-gray-600 border-gray-500 text-white',
   'Senior Consultant': 'from-blue-600 to-blue-500 border-blue-400 text-white shadow-blue-500/20',
-  'Success Builder': 'from-teal-600 to-teal-500 border-teal-400 text-white shadow-teal-500/20',
+  'Qualified Producer': 'from-amber-900 to-amber-800 border-amber-700 text-white shadow-amber-900/40', // Brown
   'Supervisor': 'from-green-600 to-emerald-500 border-green-400 text-white shadow-green-500/30 shadow-lg',
-  'World Team': 'from-red-600 to-rose-500 border-red-400 text-white shadow-red-500/30 shadow-lg',
-  'Active World Team': 'from-red-700 to-red-600 border-red-400 text-white shadow-red-600/40 shadow-xl ring-1 ring-red-400/50',
+  'World Team': 'from-gray-800 to-gray-900 border-gray-600 text-white shadow-lg', // Dark Gray
+  'Active World Team': 'from-gray-900 to-black border-gray-700 text-white shadow-xl ring-1 ring-gray-600/50', // Light Black
   'GET': 'from-amber-600 to-orange-500 border-amber-400 text-white shadow-amber-500/40 shadow-xl ring-1 ring-amber-300/50',
   'GET 2.5': 'from-amber-700 to-orange-600 border-amber-400 text-white shadow-amber-600/40 shadow-xl ring-1 ring-amber-300/50',
   'Millionaire': 'from-emerald-700 to-green-600 border-emerald-400 text-white shadow-emerald-500/40 shadow-xl ring-1 ring-emerald-300/50',
@@ -23,7 +23,7 @@ const LEVEL_COLORS: Record<HerbalifeLevel, string> = {
 };
 
 const DISCOUNTS: Record<HerbalifeLevel, number> = {
-  'Member': 25, 'Senior Consultant': 35, 'Success Builder': 42,
+  'Member': 25, 'Senior Consultant': 35, 'Qualified Producer': 42,
   'Supervisor': 50, 'World Team': 50, 'Active World Team': 50, 'GET': 50, 'GET 2.5': 50,
   'Millionaire': 50, 'Millionaire 7.5': 50, 'President': 50
 };
@@ -138,10 +138,10 @@ const TreeNode = ({
       {/* NODE CARD - Ultra Mobile Optimized */}
       <div className={`relative group min-w-[100px] sm:min-w-[150px] p-2 sm:p-3 rounded-xl border bg-gradient-to-br shadow-xl transition-all hover:scale-105 hover:shadow-2xl z-10 ${LEVEL_COLORS[member.level] || 'border-gray-600 bg-gray-800'}`}>
 
-        {/* Earnings Badge */}
+        {/* Earnings Badge - UPDATED: Darker Green & Larger */}
         {earnings > 0 && (
-          <div className={`absolute -top-3 left-1/2 -translate-x-1/2 text-white text-[8px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)] flex items-center gap-1 ${badgeColorClass} z-20 whitespace-nowrap border border-white/20`}>
-            {!parentId ? <Coins size={8} className="sm:w-[10px] sm:h-[10px]" /> : (label.includes('Royalty') ? <Coins size={8} className="sm:w-[10px] sm:h-[10px]" /> : <ArrowRight className="rotate-[-90deg] w-2 h-2 sm:w-[10px] sm:h-[10px]" size={8} />)}
+          <div className={`absolute -top-4 left-1/2 -translate-x-1/2 text-white text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)] flex items-center gap-1 ${label.includes('Diff') ? '!bg-green-800' : badgeColorClass} z-20 whitespace-nowrap border border-white/20`}>
+            {!parentId ? <Coins size={12} className="sm:w-3.5 sm:h-3.5" /> : (label.includes('Royalty') ? <Coins size={12} className="sm:w-3.5 sm:h-3.5" /> : <ArrowRight className="rotate-[-90deg] w-3 h-3 sm:w-3.5 sm:h-3.5" size={12} />)}
             <span>{label}: +{Math.floor(earnings)}€</span>
           </div>
         )}
@@ -230,7 +230,7 @@ const TreeNode = ({
 
 // ... Rest of the file
 const ORDERED_LEVELS: HerbalifeLevel[] = [
-  'Member', 'Senior Consultant', 'Success Builder', 'Supervisor',
+  'Member', 'Senior Consultant', 'Qualified Producer', 'Supervisor',
   'World Team', 'Active World Team', 'GET', 'GET 2.5',
   'Millionaire', 'Millionaire 7.5', 'President'
 ];
@@ -330,6 +330,18 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
     setNetwork([{ id: '1', name: 'Tu', level: 'Supervisor', pv: 0, children: [] }]);
   };
 
+  const resetValues = () => {
+    const resetRecursive = (nodes: DownlineMember[]): DownlineMember[] => {
+      return nodes.map(node => ({
+        ...node,
+        pv: 0,
+        level: node.id === '1' ? 'Supervisor' : 'Member',
+        children: node.children ? resetRecursive(node.children) : []
+      }));
+    };
+    setNetwork(prev => resetRecursive(prev));
+  };
+
   // Find root
   const rootNode = network[0];
   const rootDiscount = DISCOUNTS[rootNode.level];
@@ -390,12 +402,20 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
       </div>
 
       {/* FOOTER */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 pointer-events-auto">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 pointer-events-auto w-full justify-center px-4 overflow-x-auto">
         <button
-          onClick={resetNetwork}
-          className="flex items-center gap-2 px-6 py-3 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-xl border border-red-500/30 transition-all font-bold text-sm"
+          onClick={resetValues}
+          className="flex items-center gap-2 px-6 py-3 bg-yellow-500/20 hover:bg-yellow-500/40 text-yellow-200 rounded-xl border border-yellow-500/30 transition-all font-bold text-sm whitespace-nowrap"
         >
           <RefreshCw size={16} />
+          Reset PV e Qualifiche
+        </button>
+
+        <button
+          onClick={resetNetwork}
+          className="flex items-center gap-2 px-6 py-3 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-xl border border-red-500/30 transition-all font-bold text-sm whitespace-nowrap"
+        >
+          <Trash2 size={16} />
           Reset Struttura
         </button>
       </div>

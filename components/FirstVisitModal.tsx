@@ -33,7 +33,7 @@ const FirstVisitModal: React.FC<FirstVisitModalProps> = ({ onComplete, forceInst
                     </div>
 
                     <h1 className="text-4xl font-black text-white mb-2 tracking-tight">
-                        Simulatore <span className="text-union-orange-500">Sharing</span>
+                        HL <span className="text-union-orange-500">Simulator</span>
                     </h1>
                     <p className="text-blue-200 mb-10 text-lg font-medium">{t('welcome.subtitle')}</p>
 
