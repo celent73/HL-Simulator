@@ -19,7 +19,11 @@ import HerbalifeNetworkMultiplier from './components/HerbalifeNetworkMultiplier'
 import HerbalifeMarketingPlan2 from './components/HerbalifeMarketingPlan2'; // NEW IMPORT
 import { CashbackDetailedModal } from './components/CashbackDetailedModal'; // NEW IMPORT
 import RoadToPresidentModal from './components/RoadToPresidentModal'; // NEW IMPORT
-import NetworkVisualizerModal from './components/NetworkVisualizerModal'; // NEW IMPORT
+import NetworkVisualizerModal from './components/NetworkVisualizerModal'; // RESTORED IMPORT
+import DreamBoardModal from './components/DreamBoardModal'; // NEW IMPORT
+import InstaStoryGeneratorModal from './components/InstaStoryGeneratorModal'; // NEW IMPORT
+import ObjectionGymModal from './components/ObjectionGymModal'; // NEW IMPORT
+
 import { LegalFooter } from './components/LegalFooter';
 
 import { Language } from './utils/translations';
@@ -27,7 +31,7 @@ import { LegalModal } from './components/LegalModal';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 import { PremiumModal } from './components/PremiumModal';
 import { InAppBrowserOverlay } from './components/InAppBrowserOverlay';
-import { Lock, Download, ExternalLink, Trophy, Users } from 'lucide-react'; // UPDATED IMPORT
+import { Lock, Download, ExternalLink, Trophy, Users, Sparkles, Zap, Dumbbell, Camera } from 'lucide-react'; // UPDATED IMPORT
 import SunIcon from './components/icons/SunIcon';
 import MoonIcon from './components/icons/MoonIcon';
 import { ItalyFlag, GermanyFlag, SpainFlag, UKFlag } from './components/icons/Flags';
@@ -39,8 +43,9 @@ import PaymentSuccessModal from './components/PaymentSuccessModal';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { SharyProvider, useShary } from './contexts/SharyContext';
 import SharyAssistant from './components/SharyAssistant';
-import DiscountDifferenceModal from './components/DiscountDifferenceModal'; // NEW IMPORT
+import DiscountDifferenceModal from './components/DiscountDifferenceModal';
 import { InstallModal } from './components/InstallModal';
+import FocusModeModal from './components/FocusModeModal'; // ADDED IMPORT
 
 // Initial State for Herbalife Simulator
 const initialInputs: HerbalifePlanInput = {
@@ -68,7 +73,11 @@ const AppContent = () => {
   const [isRoadToPresidentOpen, setIsRoadToPresidentOpen] = useState(false);
   const [isMultiplierOpen, setIsMultiplierOpen] = useState(false);
   const [isNetworkVisualizerOpen, setIsNetworkVisualizerOpen] = useState(false);
-  const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false); // NEW STATE
+  const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
+  const [isDreamBoardOpen, setIsDreamBoardOpen] = useState(false);
+  const [isFocusModeOpen, setIsFocusModeOpen] = useState(false);
+  const [isObjectionGymOpen, setIsObjectionGymOpen] = useState(false); // NEW STATE
+  const [isInstaStoryOpen, setIsInstaStoryOpen] = useState(false); // NEW STATE
 
   // State for Marketing Plan Selector
   const [activePlan, setActivePlan] = useState<'plan1' | 'plan2'>('plan1');
@@ -228,7 +237,7 @@ const AppContent = () => {
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-4xl font-extrabold text-white drop-shadow-sm flex items-center gap-3">
                 <span className="text-3xl">🌿</span> HL <span className="text-yellow-300">Simulator</span>
-                <span className="text-xs font-normal opacity-70 mt-2">v1.1.2</span>
+                <span className="text-xs font-normal opacity-70 mt-2">v1.1.3</span>
                 {isPremium && <span className="ml-2 animate-bounce inline-block"><CrownIconSVG className="w-8 h-8 text-yellow-400" /></span>}
               </h1>
             </div>
@@ -252,7 +261,63 @@ const AppContent = () => {
                 <span className="font-bold text-sm hidden sm:inline">Herby</span>
               </button>
 
-              {/* NEW: Magic Target Button */}
+              {/* ROAD TO PRESIDENT BTN */}
+              <button
+                onClick={() => setIsRoadToPresidentOpen(true)}
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2.5 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl shadow-lg hover:shadow-yellow-500/30 transition-all border-0 font-bold text-sm hover:scale-[1.05]"
+                title="Road to President"
+              >
+                <div className="flex gap-1 items-center">
+                  <span className="text-lg"><Trophy className="w-5 h-5 text-black" fill="currentColor" /></span>
+                </div>
+              </button>
+
+              {/* INSTA STORY BTN - NEW */}
+              <button
+                onClick={() => setIsInstaStoryOpen(true)}
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2.5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white rounded-xl shadow-lg hover:shadow-purple-500/30 transition-all border-0 font-bold text-sm hover:scale-[1.05]"
+                title="Crea Story"
+              >
+                <div className="flex gap-1 items-center">
+                  <span className="text-lg"><Camera className="w-5 h-5 text-white" /></span>
+                </div>
+              </button>
+
+              {/* OBJECTION GYM BTN */}
+              <button
+                onClick={() => setIsObjectionGymOpen(true)}
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl shadow-lg hover:shadow-red-500/30 transition-all border-0 font-bold text-sm hover:scale-[1.05]"
+                title="Objection Gym"
+              >
+                <div className="flex gap-1 items-center">
+                  <span className="text-lg"><Dumbbell className="w-5 h-5 text-white" /></span>
+                </div>
+              </button>
+
+              {/* DREAM BOARD BTN */}
+              <button
+                onClick={() => setIsDreamBoardOpen(true)}
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-4 sm:py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl shadow-lg hover:shadow-pink-500/30 transition-all border-0 font-bold text-sm hover:scale-[1.05]"
+                title="Vision Board"
+              >
+                <div className="flex gap-1 items-center">
+                  <span className="text-lg"><Sparkles className="w-5 h-5 text-white" /></span>
+                  <span className="hidden sm:inline">Vision Board</span>
+                </div>
+              </button>
+
+              {/* FOCUS MODE BTN */}
+              <button
+                onClick={() => setIsFocusModeOpen(true)}
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 text-black rounded-xl shadow-lg hover:shadow-orange-500/30 transition-all border-0 font-bold text-sm hover:scale-[1.05]"
+                title="Focus Mode"
+              >
+                <div className="flex gap-1 items-center">
+                  <span className="text-lg"><Zap className="w-5 h-5 text-black" fill="currentColor" /></span>
+                </div>
+              </button>
+
+              {/* MAGIC TARGET BTN */}
 
               <button
                 onClick={() => setIsNetworkVisualizerOpen(true)}
@@ -332,6 +397,32 @@ const AppContent = () => {
       <HerbalifeNetworkMultiplier isOpen={isMultiplierOpen} onClose={() => setIsMultiplierOpen(false)} />
       <NetworkVisualizerModal isOpen={isNetworkVisualizerOpen} onClose={() => setIsNetworkVisualizerOpen(false)} activePlan={activePlan} />
       <DiscountDifferenceModal isOpen={isDiscountModalOpen} onClose={() => setIsDiscountModalOpen(false)} />
+
+      {/* NEW DREAM BOARD MODAL */}
+      <DreamBoardModal
+        isOpen={isDreamBoardOpen}
+        onClose={() => setIsDreamBoardOpen(false)}
+        currentEarnings={result.totalEarnings}
+      />
+
+      {/* NEW FOCUS MODE MODAL */}
+      <FocusModeModal
+        isOpen={isFocusModeOpen}
+        onClose={() => setIsFocusModeOpen(false)}
+      />
+
+      {/* NEW OBJECTION GYM MODAL */}
+      <ObjectionGymModal
+        isOpen={isObjectionGymOpen}
+        onClose={() => setIsObjectionGymOpen(false)}
+      />
+
+      {/* NEW INSTA STORY MODAL */}
+      <InstaStoryGeneratorModal
+        isOpen={isInstaStoryOpen}
+        onClose={() => setIsInstaStoryOpen(false)}
+        currentEarnings={result.totalEarnings}
+      />
 
       <InstallModal isOpen={showInstallModal} onClose={() => setShowInstallModal(false)} installPrompt={installPrompt} />
     </div>
