@@ -247,74 +247,94 @@ const HighLevelNetworkVisualizer: React.FC<VisualizerProps> = ({
                 <div className="absolute bottom-[20%] right-[20%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[100px]" />
             </div>
 
-            {/* HEADER */}
-            <div className="relative z-50 p-4 md:p-6 flex justify-between items-center pointer-events-none">
-                <div className="flex items-center gap-4 pointer-events-auto">
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${rank.color} shadow-lg shadow-white/5`}>
-                        <div className="text-white">{rank.icon}</div>
-                    </div>
-                    <div>
-                        <h2 className="text-xl md:text-2xl font-black text-white tracking-tight uppercase flex items-center gap-2">
-                            {rank.name}
-                            {bonusPercent > 0 && <span className="px-2 py-0.5 bg-white/20 rounded text-[10px] md:text-sm font-bold">BONUS {bonusPercent}%</span>}
-                        </h2>
-                        <div className="flex items-center gap-2">
-                            <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide hidden md:block">VISUALIZZATORE RETE PLUS</p>
-                            {/* Royalty Badge */}
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                                ROYALTY {royaltyPercent}%
-                            </span>
+            {/* HEADER - UPDATED RESPONSIVE LAYOUT */}
+            <div className="relative z-50 p-4 md:p-6 flex flex-col md:flex-row md:justify-between md:items-center pointer-events-none gap-4">
+
+                {/* TOP ROW (Mobile: Rank + Close) / LEFT (Desktop: Rank) */}
+                <div className="flex justify-between items-center w-full md:w-auto">
+                    <div className="flex items-center gap-4 pointer-events-auto">
+                        <div className={`p-3 rounded-xl bg-gradient-to-br ${rank.color} shadow-lg shadow-white/5`}>
+                            <div className="text-white">{rank.icon}</div>
+                        </div>
+                        <div>
+                            <h2 className="text-xl md:text-2xl font-black text-white tracking-tight uppercase flex items-center gap-2">
+                                {rank.name}
+                                {bonusPercent > 0 && <span className="px-2 py-0.5 bg-white/20 rounded text-[10px] md:text-sm font-bold">BONUS {bonusPercent}%</span>}
+                            </h2>
+                            <div className="flex items-center gap-2">
+                                <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide hidden md:block">VISUALIZZATORE RETE PLUS</p>
+                                {/* Royalty Badge */}
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                    ROYALTY {royaltyPercent}%
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                {/* ZOOM CONTROLS - NEW (Hidden on Mobile) */}
-                <div className="hidden md:flex pointer-events-auto gap-1 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10 mr-2">
+                    {/* Close Button - Visible here on Mobile, Hidden on Desktop to move it to far right? 
+                        Actually, standard practice is keep Close button top-right.
+                        So on Mobile: Row 1 = Rank ... Close.
+                        Row 2 = Controls.
+                    */}
                     <button
-                        onClick={() => setZoom(z => Math.max(0.2, z - 0.1))}
-                        className="w-8 h-8 flex items-center justify-center rounded-md text-white hover:bg-white/20 transition-all active:scale-95"
-                        title="Zoom Out"
+                        onClick={onClose}
+                        className="md:hidden p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:rotate-90 pointer-events-auto cursor-pointer"
                     >
-                        -
-                    </button>
-                    <button
-                        onClick={() => setZoom(1)} // Reset Zoom
-                        className="w-10 h-8 flex items-center justify-center rounded-md text-xs font-bold text-white hover:bg-white/20 transition-all"
-                        title="Reset Zoom"
-                    >
-                        {Math.round(zoom * 100)}%
-                    </button>
-                    <button
-                        onClick={() => setZoom(z => Math.min(3, z + 0.1))}
-                        className="w-8 h-8 flex items-center justify-center rounded-md text-white hover:bg-white/20 transition-all active:scale-95"
-                        title="Zoom In"
-                    >
-                        +
+                        <X size={24} />
                     </button>
                 </div>
 
-                {/* MODE TOGGLE */}
-                <div className="pointer-events-auto flex gap-2 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10">
+                {/* CONTROLS ROW (Mobile: Zoom + Mode) / RIGHT (Desktop: Zoom + Mode + Close) */}
+                <div className="flex items-center gap-2 pointer-events-auto justify-between md:justify-end w-full md:w-auto">
+
+                    {/* ZOOM CONTROLS - Visible on Mobile now */}
+                    <div className="flex gap-1 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10">
+                        <button
+                            onClick={() => setZoom(z => Math.max(0.2, z - 0.1))}
+                            className="w-8 h-8 flex items-center justify-center rounded-md text-white hover:bg-white/20 transition-all active:scale-95"
+                            title="Zoom Out"
+                        >
+                            -
+                        </button>
+                        <button
+                            onClick={() => setZoom(1)}
+                            className="w-10 h-8 flex items-center justify-center rounded-md text-xs font-bold text-white hover:bg-white/20 transition-all"
+                            title="Reset Zoom"
+                        >
+                            {Math.round(zoom * 100)}%
+                        </button>
+                        <button
+                            onClick={() => setZoom(z => Math.min(3, z + 0.1))}
+                            className="w-8 h-8 flex items-center justify-center rounded-md text-white hover:bg-white/20 transition-all active:scale-95"
+                            title="Zoom In"
+                        >
+                            +
+                        </button>
+                    </div>
+
+                    {/* MODE TOGGLE */}
+                    <div className="flex gap-2 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10">
+                        <button
+                            onClick={() => setViewMode('space')}
+                            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'space' ? 'bg-white text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                        >
+                            SPAZIO
+                        </button>
+                        <button
+                            onClick={() => setViewMode('pyramid')}
+                            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'pyramid' ? 'bg-white text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                        >
+                            NETWORK
+                        </button>
+                    </div>
+
+                    {/* Desktop Close Button */}
                     <button
-                        onClick={() => setViewMode('space')}
-                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'space' ? 'bg-white text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
+                        onClick={onClose}
+                        className="hidden md:block p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:rotate-90 pointer-events-auto cursor-pointer ml-2"
                     >
-                        SPAZIO
-                    </button>
-                    <button
-                        onClick={() => setViewMode('pyramid')}
-                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'pyramid' ? 'bg-white text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
-                    >
-                        NETWORK
+                        <X size={24} />
                     </button>
                 </div>
-
-                <button
-                    onClick={onClose}
-                    className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:rotate-90 pointer-events-auto cursor-pointer"
-                >
-                    <X size={24} />
-                </button>
             </div>
 
             {/* STATS OVERLAY (NEW) */}

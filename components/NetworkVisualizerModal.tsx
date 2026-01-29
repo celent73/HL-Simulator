@@ -433,6 +433,7 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
       }));
     };
     setNetwork(prev => resetRecursive(prev));
+    setZoom(1);
   };
 
   // Find root
@@ -451,45 +452,72 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
   // Actually, Herbalife sliding scale usually depends on Total Volume (PPV + DLV). 
   // Let's use `totalVolume` derived from traversing.
 
+  /* ZOOM STATE */
+  const [zoom, setZoom] = useState<number>(1);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl animate-in fade-in duration-300">
 
       {/* HEADER */}
-      <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-50 pointer-events-none">
-        <div className="pointer-events-auto">
-          <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500 uppercase tracking-tight">
-            {t('visualizer.title')}
-          </h1>
-          <div className="flex items-center gap-4">
-            <p className="text-gray-400 text-sm font-medium tracking-wide">
+      <div className="absolute top-0 left-0 right-0 p-6 flex flex-col md:flex-row justify-between items-start z-50 pointer-events-none gap-4">
+        <div className="pointer-events-auto w-full md:w-auto flex justify-between md:block">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500 uppercase tracking-tight">
+              {t('visualizer.title')}
+            </h1>
+            <p className="text-gray-400 text-xs md:text-sm font-medium tracking-wide hidden md:block">
               {t('visualizer.build_structure')} • {activePlan === 'plan1' ? 'Marketing Plan 1' : 'Marketing Plan 2'}
             </p>
-
-            {/* MODE TOGGLE */}
-            <div className="flex bg-white/5 rounded-lg border border-white/10 p-0.5 pointer-events-auto">
-              <button
-                onClick={() => setIsAutoMode(false)}
-                className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${!isAutoMode ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
-              >
-                Manuale
-              </button>
-              <button
-                onClick={() => setIsAutoMode(true)}
-                className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${isAutoMode ? 'bg-green-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
-              >
-                Automatico
-              </button>
-            </div>
           </div>
+          {/* Close Button Mobile */}
+          <button onClick={onClose} className="md:hidden p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all pointer-events-auto">
+            <X size={24} />
+          </button>
         </div>
 
-        <div className="flex items-center gap-4 pointer-events-auto">
-          <div className="bg-white/10 backdrop-blur border border-white/10 px-4 py-2 rounded-xl text-right">
+        <div className="flex items-center gap-2 md:gap-4 pointer-events-auto justify-between w-full md:w-auto">
+
+          {/* MODE TOGGLE */}
+          <div className="flex bg-white/5 rounded-lg border border-white/10 p-0.5">
+            <button
+              onClick={() => setIsAutoMode(false)}
+              className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${!isAutoMode ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+            >
+              Manuale
+            </button>
+            <button
+              onClick={() => setIsAutoMode(true)}
+              className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${isAutoMode ? 'bg-green-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+            >
+              Auto
+            </button>
+          </div>
+
+          {/* ZOOM CONTROLS */}
+          <div className="flex gap-1 bg-white/10 p-1 rounded-lg backdrop-blur-md border border-white/10">
+            <button
+              onClick={() => setZoom(z => Math.max(0.2, z - 0.1))}
+              className="w-8 h-8 flex items-center justify-center rounded-md text-white hover:bg-white/20 transition-all active:scale-95"
+            >
+              -
+            </button>
+            <div className="flex items-center justify-center w-8 text-xs font-bold text-white">
+              {Math.round(zoom * 100)}%
+            </div>
+            <button
+              onClick={() => setZoom(z => Math.min(3, z + 0.1))}
+              className="w-8 h-8 flex items-center justify-center rounded-md text-white hover:bg-white/20 transition-all active:scale-95"
+            >
+              +
+            </button>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur border border-white/10 px-4 py-2 rounded-xl text-right hidden md:block">
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{t('visualizer.total_volume')}</p>
             <p className="text-xl font-bold text-white">{totalVolume.toLocaleString()} PV</p>
           </div>
 
-          <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all">
+          <button onClick={onClose} className="hidden md:block p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all">
             <X size={24} />
           </button>
         </div>
@@ -497,21 +525,23 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
 
       {/* CANVAS */}
       <div className="w-full h-full overflow-auto flex justify-center pt-32 pb-20 px-8 cursor-move">
-        <TreeNode
-          member={network[0]}
-          parentId={null}
-          pathMaxDiscount={0}
-          isRoyaltyZone={false}
-          royaltyDepth={0}
-          rootDiscount={rootDiscount}
-          rootPV={network[0].pv} // UPDATED: Royalty scale based on Root's Personal Volume
-          onAdd={addChild}
-          onDelete={deleteNode}
-          onUpdate={updateNode}
-          activePlan={activePlan}
-          t={t}
-          isAutoMode={isAutoMode}
-        />
+        <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top center', transition: 'transform 0.2s' }}>
+          <TreeNode
+            member={network[0]}
+            parentId={null}
+            pathMaxDiscount={0}
+            isRoyaltyZone={false}
+            royaltyDepth={0}
+            rootDiscount={rootDiscount}
+            rootPV={network[0].pv}
+            onAdd={addChild}
+            onDelete={deleteNode}
+            onUpdate={updateNode}
+            activePlan={activePlan}
+            t={t}
+            isAutoMode={isAutoMode}
+          />
+        </div>
       </div>
 
       {/* FOOTER */}
