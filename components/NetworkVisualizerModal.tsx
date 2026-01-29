@@ -271,6 +271,7 @@ const ORDERED_LEVELS: HerbalifeLevel[] = [
 const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen, onClose, activePlan = 'plan1' }) => {
   const { t } = useLanguage();
   const [isAutoMode, setIsAutoMode] = useState(false); // NEW: Auto Mode State
+  const [zoom, setZoom] = useState<number>(1); // NEW: Zoom State (Moved to top)
   const [network, setNetwork] = useState<DownlineMember[]>([
     { id: '1', name: 'Tu', level: 'Supervisor', pv: 0, children: [] }
   ]);
@@ -452,8 +453,7 @@ const NetworkVisualizerModal: React.FC<NetworkVisualizerModalProps> = ({ isOpen,
   // Actually, Herbalife sliding scale usually depends on Total Volume (PPV + DLV). 
   // Let's use `totalVolume` derived from traversing.
 
-  /* ZOOM STATE */
-  const [zoom, setZoom] = useState<number>(1);
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl animate-in fade-in duration-300">
