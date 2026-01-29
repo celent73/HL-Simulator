@@ -228,7 +228,7 @@ const AppContent = () => {
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-4xl font-extrabold text-white drop-shadow-sm flex items-center gap-3">
                 <span className="text-3xl">🌿</span> HL <span className="text-yellow-300">Simulator</span>
-                <span className="text-xs font-normal opacity-70 mt-2">v1.1.1</span>
+                <span className="text-xs font-normal opacity-70 mt-2">v1.1.2</span>
                 {isPremium && <span className="ml-2 animate-bounce inline-block"><CrownIconSVG className="w-8 h-8 text-yellow-400" /></span>}
               </h1>
             </div>

@@ -11,7 +11,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({ onOpenLegal }) => {
     <footer className="w-full py-8 mt-12 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm transition-colors duration-300">
       <div className="container mx-auto px-4 text-center">
         <p className="mb-4 text-xs uppercase tracking-widest opacity-70">
-          &copy; {currentYear} HL Simulator. Tutti i diritti riservati. <span className="ml-2 font-black text-union-orange-500">v1.1.1</span>
+          &copy; {currentYear} HL Simulator. Tutti i diritti riservati. <span className="ml-2 font-black text-union-orange-500">v1.1.2</span>
         </p>
 
         <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-6">
